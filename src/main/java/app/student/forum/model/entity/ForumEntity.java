@@ -5,7 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class User extends ForumEntity {
-    private String name;
-    private String tag;
+public abstract class ForumEntity {
+    private Long id;
 }
