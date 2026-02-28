@@ -21,5 +21,4 @@ public class UserController {
     public UserDto getUserById(@PathVariable Long id) {
         return service.findUserById(id);
     }
-
 }
