@@ -7,6 +7,7 @@ import app.student.forum.repository.PostRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PostService {
@@ -35,4 +36,10 @@ public class PostService {
         return mapper.toDto(post);
     }
 
+    public List<PostDto> getPostsByAuthor(String author) {
+        return repository.findByAuthor(author)
+                .stream()
+                .map(mapper::toDto)
+                .toList();
+    }
 }

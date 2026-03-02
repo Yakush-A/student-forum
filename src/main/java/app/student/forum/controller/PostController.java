@@ -16,7 +16,10 @@ public class PostController {
     }
 
     @GetMapping
-    public List<PostDto> getAllPosts() {
+    public List<PostDto> getAllPosts(@RequestParam(required = false) String author) {
+        if (author != null) {
+            return postService.getPostsByAuthor(author);
+        }
         return postService.getAllPosts();
     }
 

@@ -3,6 +3,7 @@ package app.student.forum.repository;
 import app.student.forum.model.entity.Post;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,16 +21,23 @@ public class InMemoryPostRepository implements PostRepository {
 
     @Override
     public List<Post> findAll() {
-        return List.of();
+        return new ArrayList<>(storage.values());
     }
 
     @Override
     public Post findById(Long id) {
-        return null;
+        return storage.get(id);
     }
 
     @Override
     public void save(Post post) {
         storage.put(post.getId(), post);
+    }
+
+    @Override
+    public List<Post> findByAuthor(String author) {
+        return storage.values().stream()
+                .filter(post -> post.getAuthor().equals(author))
+                .toList();
     }
 }

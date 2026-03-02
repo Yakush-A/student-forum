@@ -2,15 +2,15 @@ package app.student.forum.model.entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Getter
 @Setter
 public class Post {
-    @Id
+    private static final AtomicLong counter = new AtomicLong();
     private Long id;
 
     private String author;
@@ -23,6 +23,7 @@ public class Post {
     private Set<String> topic;
 
     public Post(String author, String content) {
+        this.id = counter.incrementAndGet();
         this.author = author;
         this.content = content;
         this.createdAt = LocalDateTime.now();
