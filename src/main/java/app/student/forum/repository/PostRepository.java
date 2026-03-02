@@ -1,7 +1,6 @@
 package app.student.forum.repository;
 
 import app.student.forum.model.entity.Post;
-
 import java.util.List;
 
 public interface PostRepository {

@@ -2,7 +2,6 @@ package app.student.forum.repository;
 
 import app.student.forum.model.entity.Post;
 import org.springframework.stereotype.Repository;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

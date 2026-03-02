@@ -2,7 +2,6 @@ package app.student.forum.model.entity;
 
 import lombok.Getter;
 import lombok.Setter;
-
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
@@ -10,7 +9,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @Getter
 @Setter
 public class Post {
-    private static final AtomicLong counter = new AtomicLong();
+    private static final AtomicLong COUNTER = new AtomicLong();
     private Long id;
 
     private String author;
@@ -23,7 +22,7 @@ public class Post {
     private Set<String> topic;
 
     public Post(String author, String content) {
-        this.id = counter.incrementAndGet();
+        this.id = COUNTER.incrementAndGet();
         this.author = author;
         this.content = content;
         this.createdAt = LocalDateTime.now();

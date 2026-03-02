@@ -4,10 +4,10 @@ import app.student.forum.mapper.PostMapper;
 import app.student.forum.model.dto.PostDto;
 import app.student.forum.model.entity.Post;
 import app.student.forum.repository.PostRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PostService {
@@ -31,7 +31,7 @@ public class PostService {
         Post post = repository.findById(id);
 
         if (post == null) {
-            throw new RuntimeException("Post not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found");
         }
         return mapper.toDto(post);
     }
