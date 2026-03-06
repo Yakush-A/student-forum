@@ -1,17 +1,16 @@
-package app.student.forum.model.dto;
+package app.student.forum.model.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
-public class PostDto {
-    private Long id;
+public abstract class AbstractMessage {
+    private User user;
     private String content;
-    private String author;
-    private List<String> tags;
+
     private LocalDateTime createdAt;
     private LocalDateTime editedAt;
 }

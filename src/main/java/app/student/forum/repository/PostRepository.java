@@ -1,15 +1,14 @@
 package app.student.forum.repository;
 
 import app.student.forum.model.entity.Post;
+import org.springframework.data.jpa.repository.JpaRepository;
+
 import java.util.List;
 
-public interface PostRepository {
+public interface PostRepository extends JpaRepository<Post, Long> {
 
-    List<Post> findAll();
+    List<Post> findByAuthorUsername(String username);
 
-    Post findById(Long id);
+    List<Post> findByAuthorId(Long id);
 
-    List<Post> findByAuthor(String author);
-
-    void save(Post post);
 }

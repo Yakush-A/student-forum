@@ -10,10 +10,12 @@ public class PostMapper {
     public PostDto toDto(Post post) {
         PostDto dto = new PostDto();
         dto.setId(post.getId());
+        dto.setAuthor(post.getAuthor().getUsername());
         dto.setContent(post.getContent());
-        dto.setAuthor(post.getAuthor());
         dto.setCreatedAt(post.getCreatedAt());
         dto.setEditedAt(post.getEditedAt());
+        dto.setTags(post.getTags().stream().toList());
+
         return dto;
     }
 }

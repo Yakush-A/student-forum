@@ -1,39 +1,44 @@
 package app.student.forum.model.entity;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
 
+@Entity
 @Getter
 @Setter
 public class Post {
-    private static final AtomicLong COUNTER = new AtomicLong();
+    @Id
+    @GeneratedValue
     private Long id;
 
-    private String author;
+    @ManyToOne
+    private User author;
 
     private String content;
 
     private LocalDateTime createdAt;
     private LocalDateTime editedAt;
 
-    private Set<String> topic;
+    @OneToMany
+    private Set<Comment> comments;
 
-    public Post(String author, String content) {
-        this.id = COUNTER.incrementAndGet();
-        this.author = author;
+    @ManyToMany
+    @JoinTable(
+            name = "post_tags",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private Set<Tag> tags;
+
+    public Post(String content) {
         this.content = content;
         this.createdAt = LocalDateTime.now();
     }
 
-    protected Post() {
+    public Post() {
+        this.createdAt = LocalDateTime.now();
     }
-
-    public void edit(String newContent) {
-        this.content = newContent;
-        this.editedAt = LocalDateTime.now();
-    }
-
 }
