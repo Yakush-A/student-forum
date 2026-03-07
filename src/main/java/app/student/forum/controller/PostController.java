@@ -1,6 +1,8 @@
 package app.student.forum.controller;
 
-import app.student.forum.model.dto.PostDto;
+import app.student.forum.model.dto.PostRequestDto;
+import app.student.forum.model.dto.PostResponseDto;
+import app.student.forum.model.dto.PostUpdateDto;
 import app.student.forum.service.PostService;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -15,16 +17,31 @@ public class PostController {
         this.postService = postService;
     }
 
+    @PostMapping
+    public PostResponseDto createPost(@RequestBody PostRequestDto postRequestDto) {
+        return postService.create(postRequestDto);
+    }
+
     @GetMapping
-    public List<PostDto> getAllPosts(@RequestParam(required = false) String author) {
-        if (author != null) {
-            return postService.getPostsByAuthor(author);
+    public List<PostResponseDto> getAllPosts(@RequestParam(required = false) Long id) {
+        if (id != null) {
+            return postService.getPostsByAuthor(id);
         }
         return postService.getAllPosts();
     }
 
     @GetMapping("/{id}")
-    public PostDto getPost(@PathVariable Long id) {
+    public PostResponseDto getPost(@PathVariable Long id) {
         return postService.getPostById(id);
+    }
+
+    @PatchMapping("/{id}")
+    public PostResponseDto patchPost(@PathVariable Long id, @RequestBody PostUpdateDto postUpdateDto) {
+        return postService.patch(id, postUpdateDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deletePost(@PathVariable Long id) {
+        postService.deletePostById(id);
     }
 }

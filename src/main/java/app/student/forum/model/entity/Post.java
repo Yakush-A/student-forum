@@ -9,20 +9,25 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
+@Table(name = "posts")
 public class Post {
     @Id
     @GeneratedValue
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "author_id")
     private User author;
 
-    private String content;
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 
+    private String content;
     private LocalDateTime createdAt;
     private LocalDateTime editedAt;
 
-    @OneToMany
+    @OneToMany(mappedBy = "post")
     private Set<Comment> comments;
 
     @ManyToMany

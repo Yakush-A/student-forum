@@ -1,17 +1,16 @@
 package app.student.forum.model.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Getter
 @Setter
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue
@@ -21,9 +20,9 @@ public class User {
     private String password;
     private String email;
 
-    @OneToMany(mappedBy = "author")
-    private Set<Comment> comments;
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+    private Set<Post> posts = new HashSet<>();
 
-    @OneToMany(mappedBy = "author")
-    private Set<Post> posts;
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+    private Set<Comment> comments = new HashSet<>();
 }
