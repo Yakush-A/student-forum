@@ -1,6 +1,7 @@
 package app.student.forum.service;
 
 import app.student.forum.mapper.PostMapper;
+import app.student.forum.model.dto.PostDetailsResponseDto;
 import app.student.forum.model.dto.PostRequestDto;
 import app.student.forum.model.dto.PostResponseDto;
 import app.student.forum.model.dto.PostUpdateDto;
@@ -12,6 +13,7 @@ import app.student.forum.repository.CategoryRepository;
 import app.student.forum.repository.PostRepository;
 import app.student.forum.repository.TagRepository;
 import app.student.forum.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -115,10 +117,25 @@ public class PostService {
         postRepository.deleteById(id);
     }
 
-    public PostResponseDto getPostById(Long id) {
-        Post post = postRepository.findById(id)
+    public void renameWithoutTransaction(Long id) {
+
+        Post post = postRepository.findById(id).orElseThrow();
+
+        post.setContent("No Transaction");
+    }
+
+    @Transactional
+    public void renameWithTransaction(Long id) {
+
+        Post post = postRepository.findById(id).orElseThrow();
+
+        post.setContent("With Transaction");
+    }
+
+    public PostDetailsResponseDto getPostById(Long id) {
+        Post post = postRepository.findWithCommentsById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
-        return postMapper.toDto(post);
+        return postMapper.toDetailsDto(post);
     }
 
     public List<PostResponseDto> getPostsByAuthor(Long authorId) {

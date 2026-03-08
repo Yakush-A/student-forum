@@ -20,6 +20,9 @@ public class User {
     private String password;
     private String email;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     private Set<Post> posts = new HashSet<>();
 

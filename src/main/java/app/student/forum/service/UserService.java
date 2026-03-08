@@ -1,6 +1,7 @@
 package app.student.forum.service;
 
 import app.student.forum.mapper.UserMapper;
+import app.student.forum.model.dto.UserDetailsResponseDto;
 import app.student.forum.model.dto.UserRequestDto;
 import app.student.forum.model.dto.UserResponseDto;
 import app.student.forum.model.entity.User;
@@ -16,21 +17,12 @@ public class UserService {
 
     private final UserMapper userMapper;
 
-    public UserResponseDto create(UserRequestDto dto) {
+    public UserDetailsResponseDto getById(Long id) {
 
-        User user = userMapper.toEntity(dto);
-
-        User savedUser = userRepository.save(user);
-
-        return userMapper.toDto(savedUser);
-    }
-
-    public UserResponseDto getById(Long id) {
-
-        User user = userRepository.findById(id)
+        User user = userRepository.findWithPostsById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return userMapper.toDto(user);
+        return userMapper.toDetailsDto(user);
     }
 
     public List<UserResponseDto> getAll() {
@@ -39,5 +31,18 @@ public class UserService {
                 .stream()
                 .map(userMapper::toDto)
                 .toList();
+    }
+
+    public UserResponseDto createUser(UserRequestDto userRequestDto) {
+
+        User user = userMapper.toEntity(userRequestDto);
+
+        User savedUser = userRepository.save(user);
+
+        return userMapper.toDto(savedUser);
+    }
+
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 }

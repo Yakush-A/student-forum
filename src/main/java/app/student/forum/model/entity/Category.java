@@ -17,6 +17,6 @@ public class Category {
     private String name;
     private String description;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private Set<Post> posts;
 }

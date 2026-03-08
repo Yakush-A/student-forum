@@ -5,9 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserResponseDto {
-
-    private Long id;
-    private String username;
-
+public class TagRequestDto {
+    private String name;
 }

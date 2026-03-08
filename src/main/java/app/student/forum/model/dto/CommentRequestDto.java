@@ -5,9 +5,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserResponseDto {
+public class CommentRequestDto {
 
     private Long id;
-    private String username;
+    private String text;
+
+    private Long postId;
+    private Long authorId;
 
 }

@@ -1,30 +1,59 @@
 package app.student.forum.mapper;
 
+import app.student.forum.model.dto.UserDetailsResponseDto;
 import app.student.forum.model.dto.UserRequestDto;
 import app.student.forum.model.dto.UserResponseDto;
+import app.student.forum.model.entity.Role;
 import app.student.forum.model.entity.User;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UserMapper {
 
-    public User toEntity(UserRequestDto dto) {
-        User user = new User();
+    private final PostMapper postMapper;
 
-        user.setUsername(dto.getUsername());
-        user.setPassword(dto.getPassword());
-        user.setEmail(dto.getEmail());
-
-        return user;
+    public UserMapper(PostMapper postMapper) {
+        this.postMapper = postMapper;
     }
 
     public UserResponseDto toDto(User user) {
+
         UserResponseDto dto = new UserResponseDto();
 
         dto.setId(user.getId());
         dto.setUsername(user.getUsername());
-        dto.setEmail(user.getEmail());
 
         return dto;
+
+    }
+
+    public User toEntity(UserRequestDto userRequestDto) {
+
+        User user = new User();
+
+        user.setPassword(userRequestDto.getPassword());
+        user.setEmail(userRequestDto.getEmail());
+        user.setUsername(userRequestDto.getUsername());
+        user.setRole(Role.USER);
+
+        return user;
+
+    }
+
+    public UserDetailsResponseDto toDetailsDto(User user) {
+
+        UserDetailsResponseDto dto = new UserDetailsResponseDto();
+
+        dto.setId(user.getId());
+        dto.setUsername(user.getUsername());
+        dto.setPosts(user
+                .getPosts()
+                .stream()
+                .map(postMapper::toDto)
+                .toList()
+        );
+
+        return dto;
+
     }
 }

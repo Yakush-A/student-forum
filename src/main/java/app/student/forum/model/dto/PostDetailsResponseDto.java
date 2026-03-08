@@ -7,8 +7,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class PostResponseDto {
-
+public class PostDetailsResponseDto {
     private Long id;
 
     private Long authorId;
@@ -19,6 +18,6 @@ public class PostResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime editedAt;
 
-    private List<Long> tagIds;
-    private List<Long> commentIds;
+    private List<CommentResponseDto> comments;
+    private List<TagResponseDto> tags;
 }

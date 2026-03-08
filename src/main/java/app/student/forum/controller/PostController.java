@@ -1,5 +1,6 @@
 package app.student.forum.controller;
 
+import app.student.forum.model.dto.PostDetailsResponseDto;
 import app.student.forum.model.dto.PostRequestDto;
 import app.student.forum.model.dto.PostResponseDto;
 import app.student.forum.model.dto.PostUpdateDto;
@@ -31,7 +32,7 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public PostResponseDto getPost(@PathVariable Long id) {
+    public PostDetailsResponseDto getPost(@PathVariable Long id) {
         return postService.getPostById(id);
     }
 
@@ -43,5 +44,15 @@ public class PostController {
     @DeleteMapping("/{id}")
     public void deletePost(@PathVariable Long id) {
         postService.deletePostById(id);
+    }
+
+    @PatchMapping("/rename/{id}")
+    public PostDetailsResponseDto renamePost(@PathVariable Long id, @RequestParam(required = true) String doTransactional) {
+        if (doTransactional.equals("true")) {
+            postService.renameWithTransaction(id);
+        } else if (doTransactional.equals("false")) {
+            postService.renameWithoutTransaction(id);
+        }
+        return postService.getPostById(id);
     }
 }

@@ -1,42 +1,71 @@
 package app.student.forum.mapper;
 
+import app.student.forum.model.dto.PostDetailsResponseDto;
 import app.student.forum.model.dto.PostResponseDto;
 import app.student.forum.model.entity.Post;
 import app.student.forum.model.entity.Tag;
 import org.springframework.stereotype.Component;
 
-import java.util.Set;
-import java.util.stream.Collectors;
-
 @Component
 public class PostMapper {
 
+    private final TagMapper tagMapper;
+    private final CommentMapper commentMapper;
+
+    public PostMapper(TagMapper tagMapper, CommentMapper commentMapper) {
+        this.tagMapper = tagMapper;
+        this.commentMapper = commentMapper;
+    }
+
     public PostResponseDto toDto(Post post) {
 
-        PostResponseDto postResponseDto = new PostResponseDto();
+        PostResponseDto dto = new PostResponseDto();
 
-        postResponseDto.setId(post.getId());
-        postResponseDto.setContent(post.getContent());
-        postResponseDto.setCreatedAt(post.getCreatedAt());
-        postResponseDto.setEditedAt(post.getEditedAt());
+        dto.setId(post.getId());
+        dto.setContent(post.getContent());
+        dto.setCreatedAt(post.getCreatedAt());
+        dto.setEditedAt(post.getEditedAt());
 
-        if (post.getAuthor() != null) {
-            postResponseDto.setAuthorId(post.getAuthor().getId());
-        }
+        dto.setAuthorId(post.getAuthor().getId());
 
-        if (post.getCategory() != null) {
-            postResponseDto.setCategoryId(post.getCategory().getId());
-        }
+        dto.setCategoryId(post.getCategory().getId());
 
-        if (post.getTags() != null) {
-            Set<Long> tagIds = post.getTags()
-                    .stream()
-                    .map(Tag::getId)
-                    .collect(Collectors.toSet());
+        dto.setTagIds(post
+                .getTags()
+                .stream()
+                .map(Tag::getId)
+                .toList()
+        );
 
-            postResponseDto.setTagIds(tagIds);
-        }
+        return dto;
+    }
 
-        return postResponseDto;
+    public PostDetailsResponseDto toDetailsDto(Post post) {
+
+        PostDetailsResponseDto dto = new PostDetailsResponseDto();
+
+        dto.setId(post.getId());
+        dto.setContent(post.getContent());
+        dto.setCreatedAt(post.getCreatedAt());
+        dto.setEditedAt(post.getEditedAt());
+
+        dto.setAuthorId(post.getAuthor().getId());
+
+        dto.setCategoryId(post.getCategory().getId());
+
+        dto.setTags(post
+                .getTags()
+                .stream()
+                .map(tagMapper::toDto)
+                .toList()
+        );
+        dto.setComments(post
+                .getComments()
+                .stream()
+                .map(commentMapper::toDto)
+                .toList()
+        );
+
+        return dto;
     }
 }

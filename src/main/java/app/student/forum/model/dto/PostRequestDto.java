@@ -2,8 +2,7 @@ package app.student.forum.model.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Set;
+import java.util.List;
 
 @Getter
 @Setter
@@ -14,6 +13,6 @@ public class PostRequestDto {
 
     private String content;
 
-    private Set<Long> tagIds;
+    private List<Long> tagIds;
 
 }
