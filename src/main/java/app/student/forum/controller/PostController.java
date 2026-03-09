@@ -46,13 +46,4 @@ public class PostController {
         postService.deletePostById(id);
     }
 
-    @PatchMapping("/rename/{id}")
-    public PostDetailsResponseDto renamePost(@PathVariable Long id, @RequestParam(required = true) String doTransactional) {
-        if (doTransactional.equals("true")) {
-            postService.renameWithTransaction(id);
-        } else if (doTransactional.equals("false")) {
-            postService.renameWithoutTransaction(id);
-        }
-        return postService.getPostById(id);
-    }
 }

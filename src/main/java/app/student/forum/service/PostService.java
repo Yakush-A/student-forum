@@ -113,23 +113,9 @@ public class PostService {
         return postMapper.toDto(updatedPost);
     }
 
+    @Transactional
     public void deletePostById(Long id) {
         postRepository.deleteById(id);
-    }
-
-    public void renameWithoutTransaction(Long id) {
-
-        Post post = postRepository.findById(id).orElseThrow();
-
-        post.setContent("No Transaction");
-    }
-
-    @Transactional
-    public void renameWithTransaction(Long id) {
-
-        Post post = postRepository.findById(id).orElseThrow();
-
-        post.setContent("With Transaction");
     }
 
     public PostDetailsResponseDto getPostById(Long id) {
