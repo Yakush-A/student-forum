@@ -20,7 +20,8 @@ public class User {
     private String password;
     private String email;
 
-    @Enumerated(EnumType.STRING)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "role_id")
     private Role role;
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)

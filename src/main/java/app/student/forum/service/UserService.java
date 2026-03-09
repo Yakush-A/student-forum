@@ -4,7 +4,9 @@ import app.student.forum.mapper.UserMapper;
 import app.student.forum.model.dto.UserDetailsResponseDto;
 import app.student.forum.model.dto.UserRequestDto;
 import app.student.forum.model.dto.UserResponseDto;
+import app.student.forum.model.entity.Role;
 import app.student.forum.model.entity.User;
+import app.student.forum.repository.RoleRepository;
 import app.student.forum.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
     private final UserMapper userMapper;
 
@@ -36,6 +39,10 @@ public class UserService {
     public UserResponseDto createUser(UserRequestDto userRequestDto) {
 
         User user = userMapper.toEntity(userRequestDto);
+        Role userRole = roleRepository.findByName("User")
+                .orElseThrow(() -> new RuntimeException("Role not found"));
+
+        user.setRole(userRole);
 
         User savedUser = userRepository.save(user);
 
