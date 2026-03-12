@@ -135,7 +135,7 @@ public class PostService {
     public List<PostResponseDto> assignUncategorizedPostsToCategory(Long categoryId) {
 
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found."));
 
         List<Post> uncategorizedPosts = postRepository.findByCategoryIsNull();
 
