@@ -38,12 +38,15 @@ public class Post {
     )
     private Set<Tag> tags;
 
-    public Post(String content) {
-        this.content = content;
-        this.createdAt = LocalDateTime.now();
-    }
-
     public Post() {
         this.createdAt = LocalDateTime.now();
     }
+
+    public boolean valid() {
+
+        return createdAt != null
+                && createdAt.isBefore(LocalDateTime.now())
+                && !content.isEmpty();
+    }
+
 }

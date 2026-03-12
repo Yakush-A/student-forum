@@ -46,4 +46,8 @@ public class PostController {
         postService.deletePostById(id);
     }
 
+    @PatchMapping("/categorize/{categoryId}")
+    public List<PostResponseDto> categorizePosts(@PathVariable Long categoryId) {
+        return postService.assignUncategorizedPostsToCategory(categoryId);
+    }
 }

@@ -130,4 +130,26 @@ public class PostService {
                 .map(postMapper::toDto)
                 .toList();
     }
+
+    @Transactional
+    public List<PostResponseDto> assignUncategorizedPostsToCategory(Long categoryId) {
+
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
+
+        List<Post> uncategorizedPosts = postRepository.findByCategoryIsNull();
+
+        for (Post post : uncategorizedPosts) {
+            if (post.valid()) {
+                post.setCategory(category);
+                postRepository.save(post);
+            } else {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            }
+        }
+
+        return uncategorizedPosts.stream()
+                .map(postMapper::toDto)
+                .toList();
+    }
 }
