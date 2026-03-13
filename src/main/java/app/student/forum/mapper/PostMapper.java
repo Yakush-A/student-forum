@@ -28,7 +28,11 @@ public class PostMapper {
 
         dto.setAuthorId(post.getAuthor().getId());
 
-        dto.setCategoryId(post.getCategory().getId());
+        if (post.getCategory() != null) {
+            dto.setCategoryId(post.getCategory().getId());
+        } else {
+            dto.setCategoryId(null);
+        }
 
         dto.setTagIds(post
                 .getTags()
@@ -45,13 +49,17 @@ public class PostMapper {
         PostDetailsResponseDto dto = new PostDetailsResponseDto();
 
         dto.setId(post.getId());
-        dto.setContent(post.getContent());
         dto.setCreatedAt(post.getCreatedAt());
         dto.setEditedAt(post.getEditedAt());
+        dto.setContent(post.getContent());
 
         dto.setAuthorId(post.getAuthor().getId());
 
-        dto.setCategoryId(post.getCategory().getId());
+        if (post.getCategory() != null) {
+            dto.setCategoryId(post.getCategory().getId());
+        } else {
+            dto.setCategoryId(null);
+        }
 
         dto.setTags(post
                 .getTags()

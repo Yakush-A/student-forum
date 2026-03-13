@@ -53,14 +53,21 @@ public class PostService {
         User author = userRepository.findById(postRequestDto.getAuthorId())
                 .orElseThrow(() -> new RuntimeException("Author not found"));
 
-        Category category = categoryRepository.findById(postRequestDto.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Category not found"));
-
         Post post = new Post();
 
         post.setContent(postRequestDto.getContent());
         post.setAuthor(author);
-        post.setCategory(category);
+
+
+        if (postRequestDto.getCategoryId() != null) {
+            Category category = categoryRepository.findById(postRequestDto.getCategoryId())
+                    .orElseThrow(() -> new RuntimeException("Category not found"));
+
+            post.setCategory(category);
+        } else {
+            post.setCategory(null);
+        }
+
 
         if (postRequestDto.getTagIds() != null) {
 
