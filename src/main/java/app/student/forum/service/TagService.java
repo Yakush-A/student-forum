@@ -6,7 +6,9 @@ import app.student.forum.model.dto.tag.TagResponseDto;
 import app.student.forum.model.entity.Tag;
 import app.student.forum.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -37,7 +39,7 @@ public class TagService {
     public TagResponseDto getById(Long id) {
 
         Tag tag = tagRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Tag not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tag not found"));
 
         return tagMapper.toDto(tag);
     }
@@ -45,12 +47,12 @@ public class TagService {
     public TagResponseDto update(Long id, TagRequestDto tagRequestDto) {
 
         Tag tag = tagRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Tag not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tag not found"));
 
         if (tagRequestDto.getName() != null) {
             tag.setName(tagRequestDto.getName());
         } else {
-            throw new RuntimeException("Tag name is null");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tag name is null");
         }
 
         Tag saved = tagRepository.save(tag);

@@ -1,5 +1,6 @@
 package app.student.forum.service;
 
+import app.student.forum.exception.PostNotFoundException;
 import app.student.forum.mapper.CommentMapper;
 import app.student.forum.model.dto.comment.CommentRequestDto;
 import app.student.forum.model.dto.comment.CommentResponseDto;
@@ -30,7 +31,7 @@ public class CommentService {
     public CommentResponseDto create(CommentRequestDto commentRequestDto, User user) {
 
         Post post = postRepository.findById(commentRequestDto.getPostId())
-                .orElseThrow(() -> new RuntimeException("Post not found"));
+                .orElseThrow(PostNotFoundException::new);
 
         Comment comment = new Comment();
 
@@ -46,14 +47,14 @@ public class CommentService {
     public CommentResponseDto update(Long id, CommentRequestDto commentRequestDto, User user) {
 
         Comment comment = commentRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found"));
 
         if (!comment.getAuthor().getId().equals(user.getId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to update this comment");
         }
 
         if (comment.getContent().equals(commentRequestDto.getContent())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Comment content must not be empty");
         } else {
             comment.setContent(commentRequestDto.getContent());
         }
@@ -75,7 +76,7 @@ public class CommentService {
     public void delete(Long id, User user) {
 
         Comment comment = commentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Comment not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found"));
 
         boolean isAuthor = user.getId().equals(id);
         boolean isAdmin = user.getRole().equals(Role.ADMIN);

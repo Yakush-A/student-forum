@@ -6,7 +6,9 @@ import app.student.forum.model.dto.category.CategoryResponseDto;
 import app.student.forum.model.entity.Category;
 import app.student.forum.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -35,7 +37,7 @@ public class CategoryService {
     public CategoryResponseDto getById(Long id) {
 
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
 
         return categoryMapper.toDto(category);
     }
@@ -43,7 +45,7 @@ public class CategoryService {
     public CategoryResponseDto update(Long id, CategoryRequestDto categoryDto) {
 
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
 
         category.setName(categoryDto.getName());
         category.setDescription(categoryDto.getDescription());

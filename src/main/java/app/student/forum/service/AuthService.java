@@ -1,5 +1,6 @@
 package app.student.forum.service;
 
+import app.student.forum.exception.UserNotFoundException;
 import app.student.forum.model.dto.auth.JwtResponseDto;
 import app.student.forum.model.dto.auth.LoginRequestDto;
 import app.student.forum.model.dto.auth.RegisterRequestDto;
@@ -7,8 +8,10 @@ import app.student.forum.model.entity.Role;
 import app.student.forum.model.entity.User;
 import app.student.forum.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -21,10 +24,10 @@ public class AuthService {
     public JwtResponseDto login(LoginRequestDto loginRequestDto) {
 
         User user = userRepository.findByEmail(loginRequestDto.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(UserNotFoundException::new);
 
         if (!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Wrong password");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Wrong password");
         }
 
         String token = jwtService.generateToken(user);
@@ -35,7 +38,7 @@ public class AuthService {
     public JwtResponseDto register(RegisterRequestDto registerRequestDto) {
 
         if (userRepository.findByEmail(registerRequestDto.getEmail()).isPresent()) {
-            throw new RuntimeException("User already exists");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "User already exists");
         }
 
         User user = new User();

@@ -1,5 +1,6 @@
 package app.student.forum.service;
 
+import app.student.forum.exception.UserNotFoundException;
 import app.student.forum.mapper.UserMapper;
 import app.student.forum.model.dto.user.*;
 import app.student.forum.model.entity.Role;
@@ -24,7 +25,7 @@ public class UserService {
     public UserDetailsResponseDto getById(Long id) {
 
         User user = userRepository.findWithPostsById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(UserNotFoundException::new);
 
         return userMapper.toDetailsDto(user);
     }
@@ -41,22 +42,23 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
-    public void changePassword(ChangePasswordDto changePasswordDto, User user) {
-        if (!passwordEncoder.encode(changePasswordDto.getOldPassword()).equals(user.getPassword())) {
-            throw new RuntimeException("Old Password Doesn't Match");
+    public void changePassword(ChangePasswordDto dto, User user) {
+
+        if (!passwordEncoder.matches(dto.getOldPassword(), user.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Old password doesn't match");
         }
 
-        if (changePasswordDto.getNewPassword().equals(changePasswordDto.getNewPassword())) {
-            throw new RuntimeException("New Password is the same");
+        if (dto.getNewPassword().equals(dto.getOldPassword())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "New password must be different");
         }
 
-        user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+        user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
     }
 
     public void changeRole(Long id, ChangeRoleDto changeRoleDto) {
 
         User user = userRepository.findWithPostsById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(UserNotFoundException::new);
 
         user.setRole(changeRoleDto.getRole());
         userRepository.save(user);
@@ -75,7 +77,7 @@ public class UserService {
     public void deleteUserById(Long id, User user) {
 
         User userToDelete = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(UserNotFoundException::new);
 
         boolean isSameUser = user.getId().equals(userToDelete.getId());
         boolean isModerator = user.getRole().equals(Role.MODERATOR);

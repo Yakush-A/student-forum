@@ -1,5 +1,6 @@
 package app.student.forum.service;
 
+import app.student.forum.exception.PostNotFoundException;
 import app.student.forum.mapper.PostMapper;
 import app.student.forum.model.dto.post.PostDetailsResponseDto;
 import app.student.forum.model.dto.post.PostRequestDto;
@@ -46,7 +47,7 @@ public class PostService {
 
         if (postRequestDto.getCategoryId() != null) {
             Category category = categoryRepository.findById(postRequestDto.getCategoryId())
-                    .orElseThrow(() -> new RuntimeException("Category not found"));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
 
             post.setCategory(category);
         } else {
@@ -65,10 +66,10 @@ public class PostService {
     public PostResponseDto patch(Long id, PostUpdateDto postUpdateDto, User user) {
 
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
+                .orElseThrow(PostNotFoundException::new);
 
         if (!post.getAuthor().equals(user)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to patch this post");
         }
 
         if (postUpdateDto.getContent() != null) {
@@ -78,7 +79,7 @@ public class PostService {
         if (postUpdateDto.getCategoryId() != null) {
 
             Category category = categoryRepository.findById(postUpdateDto.getCategoryId())
-                    .orElseThrow(() -> new RuntimeException("Category not found"));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
 
             post.setCategory(category);
         }
@@ -88,7 +89,7 @@ public class PostService {
             Set<Tag> tags = postUpdateDto.getTagIds()
                     .stream()
                     .map(tagId -> tagRepository.findById(tagId)
-                            .orElseThrow(() -> new RuntimeException("Tag not found")))
+                            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tag not found")))
                     .collect(Collectors.toSet());
 
             post.setTags(tags);
@@ -104,7 +105,7 @@ public class PostService {
     public void deletePostById(Long id, User user) {
 
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
+                .orElseThrow(PostNotFoundException::new);
 
         boolean isAuthor = post.getAuthor().equals(user);
         boolean isModerator = user.getRole().equals(Role.MODERATOR);
@@ -119,7 +120,7 @@ public class PostService {
 
     public PostDetailsResponseDto getPostById(Long id) {
         Post post = postRepository.findWithCommentsById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
+                .orElseThrow(PostNotFoundException::new);
         return postMapper.toDetailsDto(post);
     }
 
