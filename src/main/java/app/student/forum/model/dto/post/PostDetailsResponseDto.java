@@ -1,7 +1,10 @@
-package app.student.forum.model.dto;
+package app.student.forum.model.dto.post;
 
+import app.student.forum.model.dto.comment.CommentResponseDto;
+import app.student.forum.model.dto.tag.TagResponseDto;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.util.List;
 

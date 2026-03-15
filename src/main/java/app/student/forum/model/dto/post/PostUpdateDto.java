@@ -1,4 +1,4 @@
-package app.student.forum.model.dto;
+package app.student.forum.model.dto.post;
 
 import lombok.Getter;
 import lombok.Setter;

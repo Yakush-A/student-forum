@@ -1,12 +1,11 @@
 package app.student.forum.service;
 
-import app.student.forum.model.dto.JwtResponseDto;
-import app.student.forum.model.dto.LoginRequestDto;
-import app.student.forum.model.dto.RegisterRequestDto;
+import app.student.forum.model.dto.auth.JwtResponseDto;
+import app.student.forum.model.dto.auth.LoginRequestDto;
+import app.student.forum.model.dto.auth.RegisterRequestDto;
+import app.student.forum.model.entity.Role;
 import app.student.forum.model.entity.User;
 import app.student.forum.repository.UserRepository;
-import app.student.forum.security.JwtService;
-import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,12 +27,27 @@ public class AuthService {
             throw new RuntimeException("Wrong password");
         }
 
-        String token = JwtService.generateToken(user);
+        String token = jwtService.generateToken(user);
 
         return new JwtResponseDto(token);
     }
 
     public JwtResponseDto register(RegisterRequestDto registerRequestDto) {
 
+        if (userRepository.findByEmail(registerRequestDto.getEmail()).isPresent()) {
+            throw new RuntimeException("User already exists");
+        }
+
+        User user = new User();
+        user.setEmail(registerRequestDto.getEmail());
+        user.setPassword(passwordEncoder.encode(registerRequestDto.getPassword()));
+        user.setRole(Role.USER);
+        user.setUsername(registerRequestDto.getUsername());
+
+        userRepository.save(user);
+
+        String token = jwtService.generateToken(user);
+
+        return new JwtResponseDto(token);
     }
 }

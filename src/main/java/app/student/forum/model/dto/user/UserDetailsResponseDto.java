@@ -1,5 +1,6 @@
-package app.student.forum.model.dto;
+package app.student.forum.model.dto.user;
 
+import app.student.forum.model.dto.post.PostResponseDto;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -1,7 +1,7 @@
 package app.student.forum.mapper;
 
-import app.student.forum.model.dto.TagRequestDto;
-import app.student.forum.model.dto.TagResponseDto;
+import app.student.forum.model.dto.tag.TagRequestDto;
+import app.student.forum.model.dto.tag.TagResponseDto;
 import app.student.forum.model.entity.Tag;
 import org.springframework.stereotype.Component;
 

@@ -1,8 +1,8 @@
 package app.student.forum.controller;
 
-import app.student.forum.model.dto.JwtResponseDto;
-import app.student.forum.model.dto.LoginRequestDto;
-import app.student.forum.model.dto.RegisterRequestDto;
+import app.student.forum.model.dto.auth.JwtResponseDto;
+import app.student.forum.model.dto.auth.LoginRequestDto;
+import app.student.forum.model.dto.auth.RegisterRequestDto;
 import app.student.forum.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

@@ -1,5 +1,6 @@
 package app.student.forum.security;
 
+import app.student.forum.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -18,6 +21,7 @@ import java.io.IOException;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
+    private final UserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(
@@ -36,10 +40,13 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = authHeader.replace("Bearer ", "");
         String email = jwtService.extractEmailFromToken(token);
 
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(
-                        email,
-                        null
+                        userDetails,
+                        null,
+                        userDetails.getAuthorities()
                 );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);

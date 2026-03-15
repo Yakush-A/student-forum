@@ -1,23 +1,21 @@
 package app.student.forum.service;
 
 import app.student.forum.mapper.TagMapper;
-import app.student.forum.model.dto.TagRequestDto;
-import app.student.forum.model.dto.TagResponseDto;
+import app.student.forum.model.dto.tag.TagRequestDto;
+import app.student.forum.model.dto.tag.TagResponseDto;
 import app.student.forum.model.entity.Tag;
 import app.student.forum.repository.TagRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class TagService {
 
     private final TagRepository tagRepository;
     private final TagMapper tagMapper;
-
-    public TagService(TagRepository tagRepository, TagMapper tagMapper) {
-        this.tagRepository = tagRepository;
-        this.tagMapper = tagMapper;
-    }
 
     public TagResponseDto create(TagRequestDto tagRequestDto) {
 
@@ -49,8 +47,11 @@ public class TagService {
         Tag tag = tagRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Tag not found"));
 
-        Tag updatedTag = tagMapper.toEntity(tagRequestDto);
-        tag.setName(updatedTag.getName());
+        if (tagRequestDto.getName() != null) {
+            tag.setName(tagRequestDto.getName());
+        } else {
+            throw new RuntimeException("Tag name is null");
+        }
 
         Tag saved = tagRepository.save(tag);
 

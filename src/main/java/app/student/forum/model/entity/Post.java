@@ -3,7 +3,9 @@ package app.student.forum.model.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -27,8 +29,8 @@ public class Post {
     private LocalDateTime createdAt;
     private LocalDateTime editedAt;
 
-    @OneToMany(mappedBy = "post")
-    private Set<Comment> comments;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Comment> comments = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
@@ -36,7 +38,7 @@ public class Post {
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
-    private Set<Tag> tags;
+    private Set<Tag> tags = new HashSet<>();
 
     public Post() {
         this.createdAt = LocalDateTime.now();
@@ -46,6 +48,7 @@ public class Post {
 
         return createdAt != null
                 && createdAt.isBefore(LocalDateTime.now())
+                && author != null
                 && !content.isEmpty();
     }
 

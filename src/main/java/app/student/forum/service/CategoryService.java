@@ -1,39 +1,38 @@
 package app.student.forum.service;
 
 import app.student.forum.mapper.CategoryMapper;
-import app.student.forum.model.dto.CategoryDto;
+import app.student.forum.model.dto.category.CategoryRequestDto;
+import app.student.forum.model.dto.category.CategoryResponseDto;
 import app.student.forum.model.entity.Category;
 import app.student.forum.repository.CategoryRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
 
-    public CategoryService(CategoryRepository categoryRepository, CategoryMapper categoryMapper) {
-        this.categoryRepository = categoryRepository;
-        this.categoryMapper = categoryMapper;
-    }
+    public CategoryResponseDto create(CategoryRequestDto categoryRequestDto) {
 
-    public CategoryDto create(CategoryDto categoryDto) {
-
-        Category category = categoryMapper.toEntity(categoryDto);
+        Category category = categoryMapper.toEntity(categoryRequestDto);
         Category savedCategory = categoryRepository.save(category);
 
         return categoryMapper.toDto(savedCategory);
     }
 
-    public List<CategoryDto> getAll() {
+    public List<CategoryResponseDto> getAll() {
         return categoryRepository.findAll()
                 .stream()
                 .map(categoryMapper::toDto)
                 .toList();
     }
 
-    public CategoryDto getById(Long id) {
+    public CategoryResponseDto getById(Long id) {
 
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Category not found"));
@@ -41,7 +40,7 @@ public class CategoryService {
         return categoryMapper.toDto(category);
     }
 
-    public CategoryDto update(Long id, CategoryDto categoryDto) {
+    public CategoryResponseDto update(Long id, CategoryRequestDto categoryDto) {
 
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Category not found"));

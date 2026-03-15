@@ -1,18 +1,25 @@
 package app.student.forum.service;
 
 import app.student.forum.mapper.CommentMapper;
-import app.student.forum.model.dto.CommentRequestDto;
-import app.student.forum.model.dto.CommentResponseDto;
+import app.student.forum.model.dto.comment.CommentRequestDto;
+import app.student.forum.model.dto.comment.CommentResponseDto;
 import app.student.forum.model.entity.Comment;
 import app.student.forum.model.entity.Post;
+import app.student.forum.model.entity.Role;
 import app.student.forum.model.entity.User;
 import app.student.forum.repository.CommentRepository;
 import app.student.forum.repository.PostRepository;
 import app.student.forum.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CommentService {
 
     private final CommentRepository commentRepository;
@@ -20,26 +27,41 @@ public class CommentService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
-    public CommentService(CommentRepository commentRepository, CommentMapper commentMapper, PostRepository postRepository, UserRepository userRepository) {
-        this.commentRepository = commentRepository;
-        this.commentMapper = commentMapper;
-        this.postRepository = postRepository;
-        this.userRepository = userRepository;
-    }
-
-    public CommentResponseDto create(CommentRequestDto commentRequestDto) {
+    public CommentResponseDto create(CommentRequestDto commentRequestDto, User user) {
 
         Post post = postRepository.findById(commentRequestDto.getPostId())
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        User author = userRepository.findById(commentRequestDto.getAuthorId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        Comment comment = new Comment();
 
-        Comment comment = commentMapper.toEntity(commentRequestDto, post, author);
+        comment.setContent(commentRequestDto.getContent());
+        comment.setPost(post);
+        comment.setAuthor(user);
 
-        var saved = commentRepository.save(comment);
+        Comment saved = commentRepository.save(comment);
 
         return commentMapper.toDto(saved);
+    }
+
+    public CommentResponseDto update(Long id, CommentRequestDto commentRequestDto, User user) {
+
+        Comment comment = commentRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        if (!comment.getAuthor().getId().equals(user.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        if (comment.getContent().equals(commentRequestDto.getContent())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        } else {
+            comment.setContent(commentRequestDto.getContent());
+        }
+
+        comment.setUpdatedAt(LocalDateTime.now());
+
+        Comment updated = commentRepository.save(comment);
+        return commentMapper.toDto(updated);
     }
 
     public List<CommentResponseDto> getByPost(Long postId) {
@@ -50,8 +72,20 @@ public class CommentService {
                 .toList();
     }
 
-    public void delete(Long id) {
-        commentRepository.deleteById(id);
+    public void delete(Long id, User user) {
+
+        Comment comment = commentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
+
+        boolean isAuthor = user.getId().equals(id);
+        boolean isAdmin = user.getRole().equals(Role.ADMIN);
+        boolean isModerator = user.getRole().equals(Role.MODERATOR);
+
+        if (isAuthor || isAdmin || isModerator) {
+            commentRepository.delete(comment);
+        } else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
     }
 
 }

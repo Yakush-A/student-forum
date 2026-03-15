@@ -1,45 +1,34 @@
 package app.student.forum.service;
 
 import app.student.forum.mapper.PostMapper;
-import app.student.forum.model.dto.PostDetailsResponseDto;
-import app.student.forum.model.dto.PostRequestDto;
-import app.student.forum.model.dto.PostResponseDto;
-import app.student.forum.model.dto.PostUpdateDto;
-import app.student.forum.model.entity.Category;
-import app.student.forum.model.entity.Post;
-import app.student.forum.model.entity.Tag;
-import app.student.forum.model.entity.User;
+import app.student.forum.model.dto.post.PostDetailsResponseDto;
+import app.student.forum.model.dto.post.PostRequestDto;
+import app.student.forum.model.dto.post.PostResponseDto;
+import app.student.forum.model.dto.post.PostUpdateDto;
+import app.student.forum.model.entity.*;
 import app.student.forum.repository.CategoryRepository;
 import app.student.forum.repository.PostRepository;
 import app.student.forum.repository.TagRepository;
-import app.student.forum.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class PostService {
 
     private final PostRepository postRepository;
-    private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final TagRepository tagRepository;
-
     private final PostMapper postMapper;
-
-    public PostService(PostRepository postRepository, UserRepository userRepository, CategoryRepository categoryRepository, TagRepository tagRepository, PostMapper postMapper) {
-        this.postRepository = postRepository;
-        this.userRepository = userRepository;
-        this.categoryRepository = categoryRepository;
-        this.tagRepository = tagRepository;
-        this.postMapper = postMapper;
-    }
 
     public List<PostResponseDto> getAllPosts() {
         return postRepository.findAll()
@@ -48,16 +37,12 @@ public class PostService {
                 .toList();
     }
 
-    public PostResponseDto create(PostRequestDto postRequestDto) {
-
-        User author = userRepository.findById(postRequestDto.getAuthorId())
-                .orElseThrow(() -> new RuntimeException("Author not found"));
+    public PostResponseDto create(PostRequestDto postRequestDto, User user) {
 
         Post post = new Post();
 
         post.setContent(postRequestDto.getContent());
-        post.setAuthor(author);
-
+        post.setAuthor(user);
 
         if (postRequestDto.getCategoryId() != null) {
             Category category = categoryRepository.findById(postRequestDto.getCategoryId())
@@ -68,27 +53,23 @@ public class PostService {
             post.setCategory(null);
         }
 
-
-        if (postRequestDto.getTagIds() != null) {
-
-            Set<Tag> tags = postRequestDto.getTagIds()
-                    .stream()
-                    .map(tagId -> tagRepository.findById(tagId)
-                            .orElseThrow(() -> new RuntimeException("Tag not found")))
-                    .collect(Collectors.toSet());
-
+        if (postRequestDto.getTagIds() != null && !postRequestDto.getTagIds().isEmpty()) {
+            Set<Tag> tags = new HashSet<>(tagRepository.findAllById(postRequestDto.getTagIds()));
             post.setTags(tags);
         }
 
         Post savedPost = postRepository.save(post);
-
         return postMapper.toDto(savedPost);
     }
 
-    public PostResponseDto patch(Long id, PostUpdateDto postUpdateDto) {
+    public PostResponseDto patch(Long id, PostUpdateDto postUpdateDto, User user) {
 
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        if (!post.getAuthor().equals(user)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
 
         if (postUpdateDto.getContent() != null) {
             post.setContent(postUpdateDto.getContent());
@@ -116,13 +97,24 @@ public class PostService {
         post.setEditedAt(LocalDateTime.now());
 
         Post updatedPost = postRepository.save(post);
-
         return postMapper.toDto(updatedPost);
     }
 
     @Transactional
-    public void deletePostById(Long id) {
-        postRepository.deleteById(id);
+    public void deletePostById(Long id, User user) {
+
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        boolean isAuthor = post.getAuthor().equals(user);
+        boolean isModerator = user.getRole().equals(Role.MODERATOR);
+        boolean isAdmin = user.getRole().equals(Role.ADMIN);
+
+        if (isAuthor || isModerator || isAdmin) {
+            postRepository.delete(post);
+        } else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
     }
 
     public PostDetailsResponseDto getPostById(Long id) {

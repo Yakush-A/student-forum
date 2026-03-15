@@ -3,6 +3,8 @@ package app.student.forum.model.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -17,6 +19,6 @@ public class Category {
     private String name;
     private String description;
 
-    @OneToMany(mappedBy = "category")
-    private Set<Post> posts;
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+    private Set<Post> posts = new HashSet<>();
 }

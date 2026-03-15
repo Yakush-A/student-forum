@@ -1,21 +1,18 @@
 package app.student.forum.mapper;
 
-import app.student.forum.model.dto.PostDetailsResponseDto;
-import app.student.forum.model.dto.PostResponseDto;
+import app.student.forum.model.dto.post.PostDetailsResponseDto;
+import app.student.forum.model.dto.post.PostResponseDto;
 import app.student.forum.model.entity.Post;
 import app.student.forum.model.entity.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class PostMapper {
 
     private final TagMapper tagMapper;
     private final CommentMapper commentMapper;
-
-    public PostMapper(TagMapper tagMapper, CommentMapper commentMapper) {
-        this.tagMapper = tagMapper;
-        this.commentMapper = commentMapper;
-    }
 
     public PostResponseDto toDto(Post post) {
 

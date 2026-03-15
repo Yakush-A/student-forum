@@ -1,41 +1,45 @@
 package app.student.forum.controller;
 
-import app.student.forum.model.dto.CategoryDto;
+import app.student.forum.model.dto.category.CategoryRequestDto;
+import app.student.forum.model.dto.category.CategoryResponseDto;
 import app.student.forum.service.CategoryService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/categories")
 public class CategoryController {
 
     private final CategoryService categoryService;
 
-    public CategoryController(CategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
-
     @PostMapping
-    public CategoryDto create(@RequestBody CategoryDto categoryDto) {
-        return categoryService.create(categoryDto);
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
+    public CategoryResponseDto create(@RequestBody CategoryRequestDto categoryRequestDto) {
+        return categoryService.create(categoryRequestDto);
     }
 
     @GetMapping
-    public List<CategoryDto> getAll() {
+    public List<CategoryResponseDto> getAll() {
         return categoryService.getAll();
     }
 
     @GetMapping("/{id}")
-    public CategoryDto getById(@PathVariable Long id) {
+    public CategoryResponseDto getById(@PathVariable Long id) {
         return categoryService.getById(id);
     }
 
     @PutMapping("/{id}")
-    public CategoryDto update(@PathVariable Long id, @RequestBody CategoryDto categoryDto) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public CategoryResponseDto update(@PathVariable Long id, @RequestBody CategoryRequestDto categoryDto) {
         return categoryService.update(id, categoryDto);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public void delete(@PathVariable Long id) {
         categoryService.delete(id);
     }

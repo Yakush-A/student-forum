@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Entity
@@ -13,7 +15,10 @@ public class Comment {
     @GeneratedValue
     private Long id;
 
-    private String text;
+    private String content;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
@@ -22,4 +27,8 @@ public class Comment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id")
     private User author;
+
+    public Comment() {
+        createdAt = LocalDateTime.now();
+    }
 }

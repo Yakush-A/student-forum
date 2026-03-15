@@ -1,8 +1,8 @@
 package app.student.forum.mapper;
 
-import app.student.forum.model.dto.UserDetailsResponseDto;
-import app.student.forum.model.dto.UserRequestDto;
-import app.student.forum.model.dto.UserResponseDto;
+import app.student.forum.model.dto.user.UserDetailsResponseDto;
+import app.student.forum.model.dto.user.UserRequestDto;
+import app.student.forum.model.dto.user.UserResponseDto;
 import app.student.forum.model.entity.User;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +21,7 @@ public class UserMapper {
 
         dto.setId(user.getId());
         dto.setUsername(user.getUsername());
-        dto.setRole(user.getRole().getName());
+        dto.setRole(user.getRole().name());
 
         return dto;
 

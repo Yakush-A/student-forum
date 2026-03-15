@@ -1,4 +1,4 @@
-package app.student.forum.model.dto;
+package app.student.forum.model.dto.comment;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,10 +7,7 @@ import lombok.Setter;
 @Setter
 public class CommentRequestDto {
 
-    private Long id;
-    private String text;
-
+    private String content;
     private Long postId;
-    private Long authorId;
 
 }

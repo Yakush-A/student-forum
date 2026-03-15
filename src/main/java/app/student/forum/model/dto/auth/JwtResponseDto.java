@@ -1,4 +1,4 @@
-package app.student.forum.model.dto;
+package app.student.forum.model.dto.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

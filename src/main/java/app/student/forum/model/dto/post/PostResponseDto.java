@@ -1,7 +1,8 @@
-package app.student.forum.model.dto;
+package app.student.forum.model.dto.post;
 
 import lombok.Getter;
 import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
