@@ -39,11 +39,11 @@ public class CommentController {
     }
 
     @PatchMapping("/{id}")
-    public void update(
+    public CommentResponseDto update(
             @PathVariable Long id,
             @RequestBody CommentRequestDto commentRequestDto,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        commentService.update(id, commentRequestDto, customUserDetails.getUser());
+        return commentService.update(id, commentRequestDto, customUserDetails.getUser());
     }
 }

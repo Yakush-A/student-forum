@@ -22,7 +22,7 @@ public class Post {
     private User author;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id", nullable = true)
     private Category category;
 
     private String content;

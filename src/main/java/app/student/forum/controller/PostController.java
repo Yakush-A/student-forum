@@ -44,7 +44,7 @@ public class PostController {
     @PatchMapping("/{id}")
     public PostResponseDto patchPost(
             @PathVariable Long id,
-            @RequestBody CustomUserDetails customUserDetails,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @RequestBody PostUpdateDto postUpdateDto
     ) {
         return postService.patch(id, postUpdateDto, customUserDetails.getUser());

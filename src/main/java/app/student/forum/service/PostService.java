@@ -68,7 +68,7 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(PostNotFoundException::new);
 
-        if (!post.getAuthor().equals(user)) {
+        if (!post.getAuthor().getId().equals(user.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to patch this post");
         }
 
@@ -107,7 +107,7 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(PostNotFoundException::new);
 
-        boolean isAuthor = post.getAuthor().equals(user);
+        boolean isAuthor = post.getAuthor().getId().equals(user.getId());
         boolean isModerator = user.getRole().equals(Role.MODERATOR);
         boolean isAdmin = user.getRole().equals(Role.ADMIN);
 

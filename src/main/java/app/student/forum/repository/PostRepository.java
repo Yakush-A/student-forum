@@ -19,6 +19,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findByAuthorId(Long id);
 
+    List<Post> findByCategoryId(Long id);
+
     List<Post> findByCategoryIsNull();
 
 }

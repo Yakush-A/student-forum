@@ -10,7 +10,6 @@ import app.student.forum.model.entity.Role;
 import app.student.forum.model.entity.User;
 import app.student.forum.repository.CommentRepository;
 import app.student.forum.repository.PostRepository;
-import app.student.forum.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -26,7 +25,6 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
     private final PostRepository postRepository;
-    private final UserRepository userRepository;
 
     public CommentResponseDto create(CommentRequestDto commentRequestDto, User user) {
 
@@ -78,7 +76,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found"));
 
-        boolean isAuthor = user.getId().equals(id);
+        boolean isAuthor = user.getId().equals(comment.getAuthor().getId());
         boolean isAdmin = user.getRole().equals(Role.ADMIN);
         boolean isModerator = user.getRole().equals(Role.MODERATOR);
 
