@@ -13,6 +13,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     SELECT p FROM Post p
     LEFT JOIN FETCH p.comments
     LEFT JOIN FETCH p.tags
+    LEFT JOIN FETCH p.category
+    LEFT JOIN FETCH p.author
     WHERE p.id = :id
     """)
     Optional<Post> findWithCommentsById(Long id);
