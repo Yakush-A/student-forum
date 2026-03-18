@@ -1,5 +1,7 @@
 package app.student.forum.service;
 
+import app.student.forum.exception.ForbiddenAccessException;
+import app.student.forum.exception.NotFoundException;
 import app.student.forum.exception.PostNotFoundException;
 import app.student.forum.mapper.PostMapper;
 import app.student.forum.model.dto.post.PostDetailsResponseDto;
@@ -10,16 +12,18 @@ import app.student.forum.model.entity.*;
 import app.student.forum.repository.CategoryRepository;
 import app.student.forum.repository.PostRepository;
 import app.student.forum.repository.TagRepository;
+import app.student.forum.service.cache.PostQueryKey;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,12 +34,15 @@ public class PostService {
     private final CategoryRepository categoryRepository;
     private final TagRepository tagRepository;
     private final PostMapper postMapper;
+    private final Map<PostQueryKey, Page<PostResponseDto>> postCache = new ConcurrentHashMap<>();
 
-    public List<PostResponseDto> getAllPosts() {
-        return postRepository.findAll()
-                .stream()
-                .map(postMapper::toDto)
-                .toList();
+    public Page<PostResponseDto> getAllPosts(Pageable pageable) {
+        PostQueryKey postQueryKey = new PostQueryKey(null, null, pageable);
+
+        return postCache.computeIfAbsent(
+                postQueryKey,
+                k -> postRepository.findAll(pageable).map(postMapper::toDto)
+        );
     }
 
     public PostResponseDto create(PostRequestDto postRequestDto, User user) {
@@ -47,7 +54,7 @@ public class PostService {
 
         if (postRequestDto.getCategoryId() != null) {
             Category category = categoryRepository.findById(postRequestDto.getCategoryId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
+                    .orElseThrow(() -> new NotFoundException("Category not found"));
 
             post.setCategory(category);
         } else {
@@ -60,16 +67,18 @@ public class PostService {
         }
 
         Post savedPost = postRepository.save(post);
+        postCache.clear();
         return postMapper.toDto(savedPost);
     }
 
+    @Transactional
     public PostResponseDto patch(Long id, PostUpdateDto postUpdateDto, User user) {
 
         Post post = postRepository.findById(id)
-                .orElseThrow(PostNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("Post not found"));
 
         if (!post.getAuthor().getId().equals(user.getId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to patch this post");
+            throw new ForbiddenAccessException("You are not allowed to patch this post");
         }
 
         if (postUpdateDto.getContent() != null) {
@@ -79,7 +88,7 @@ public class PostService {
         if (postUpdateDto.getCategoryId() != null) {
 
             Category category = categoryRepository.findById(postUpdateDto.getCategoryId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
+                    .orElseThrow(() -> new NotFoundException("Category not found"));
 
             post.setCategory(category);
         }
@@ -89,7 +98,7 @@ public class PostService {
             Set<Tag> tags = postUpdateDto.getTagIds()
                     .stream()
                     .map(tagId -> tagRepository.findById(tagId)
-                            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tag not found")))
+                            .orElseThrow(() -> new NotFoundException("Tag not found")))
                     .collect(Collectors.toSet());
 
             post.setTags(tags);
@@ -98,6 +107,7 @@ public class PostService {
         post.setEditedAt(LocalDateTime.now());
 
         Post updatedPost = postRepository.save(post);
+        postCache.clear();
         return postMapper.toDto(updatedPost);
     }
 
@@ -105,7 +115,7 @@ public class PostService {
     public void deletePostById(Long id, User user) {
 
         Post post = postRepository.findById(id)
-                .orElseThrow(PostNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("Post not found"));
 
         boolean isAuthor = post.getAuthor().getId().equals(user.getId());
         boolean isModerator = user.getRole().equals(Role.MODERATOR);
@@ -114,28 +124,33 @@ public class PostService {
         if (isAuthor || isModerator || isAdmin) {
             postRepository.delete(post);
         } else {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            throw new NotFoundException("Post is corrupted");
         }
+        postCache.clear();
     }
 
+    @Transactional
     public PostDetailsResponseDto getPostById(Long id) {
         Post post = postRepository.findWithCommentsById(id)
                 .orElseThrow(PostNotFoundException::new);
         return postMapper.toDetailsDto(post);
     }
 
-    public List<PostResponseDto> getPostsByAuthor(Long authorId) {
-        return postRepository.findByAuthorId(authorId)
-                .stream()
-                .map(postMapper::toDto)
-                .toList();
+    @Transactional
+    public Page<PostResponseDto> getPostsByAuthor(Long authorId, Pageable pageable) {
+        PostQueryKey postQueryKey = new PostQueryKey(authorId, null, pageable);
+
+        return postCache.computeIfAbsent(
+                postQueryKey,
+                k -> postRepository.findByAuthorId(authorId, pageable).map(postMapper::toDto)
+        );
     }
 
     @Transactional
     public List<PostResponseDto> assignUncategorizedPostsToCategory(Long categoryId) {
 
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found."));
+                .orElseThrow(() -> new NotFoundException("Category not found."));
 
         List<Post> uncategorizedPosts = postRepository.findByCategoryIsNull();
 
@@ -144,7 +159,7 @@ public class PostService {
                 post.setCategory(category);
                 postRepository.save(post);
             } else {
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+                throw new ForbiddenAccessException("You are not allowed to patch this post");
             }
         }
 

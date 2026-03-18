@@ -4,6 +4,8 @@ import app.student.forum.model.dto.tag.TagRequestDto;
 import app.student.forum.model.dto.tag.TagResponseDto;
 import app.student.forum.service.TagService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +25,10 @@ public class TagController {
     }
 
     @GetMapping
-    public List<TagResponseDto> getAll() {
-        return tagService.getAll();
+    public Page<TagResponseDto> getTags(
+            Pageable pageable
+    ) {
+        return tagService.getAll(pageable);
     }
 
     @GetMapping("/{id}")
@@ -42,5 +46,13 @@ public class TagController {
     @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
     public void delete(@PathVariable Long id) {
         tagService.delete(id);
+    }
+
+    @GetMapping("/search")
+    public Page<TagResponseDto> search(
+            @RequestParam String name,
+            Pageable pageable
+    ) {
+        return tagService.findAllByName(pageable, name);
     }
 }

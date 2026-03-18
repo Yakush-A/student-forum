@@ -4,6 +4,8 @@ import app.student.forum.model.dto.category.CategoryRequestDto;
 import app.student.forum.model.dto.category.CategoryResponseDto;
 import app.student.forum.service.CategoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +25,10 @@ public class CategoryController {
     }
 
     @GetMapping
-    public List<CategoryResponseDto> getAll() {
-        return categoryService.getAll();
+    public Page<CategoryResponseDto> getAll(
+            Pageable pageable
+    ) {
+        return categoryService.getAll(pageable);
     }
 
     @GetMapping("/{id}")

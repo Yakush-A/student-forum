@@ -1,12 +1,15 @@
 package app.student.forum.repository;
 
 import app.student.forum.model.entity.Tag;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.Optional;
 
 public interface TagRepository extends JpaRepository<Tag, Long> {
 
-    Optional<Tag> findByName(String name);
+    Page<Tag> findByNameContainingIgnoreCase(String name, Pageable pageable);
 
+    Page<Tag> findAll(Pageable pageable);
+
+    boolean existsByNameIgnoreCase(String name);
 }

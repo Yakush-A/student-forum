@@ -5,6 +5,8 @@ import app.student.forum.model.dto.comment.CommentResponseDto;
 import app.student.forum.security.CustomUserDetails;
 import app.student.forum.service.CommentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,8 +28,11 @@ public class CommentController {
     }
 
     @GetMapping("/post/{postId}")
-    public List<CommentResponseDto> getByPost(@PathVariable Long postId) {
-        return commentService.getByPost(postId);
+    public Page<CommentResponseDto> getByPostId(
+            @PathVariable Long postId,
+            Pageable pageable
+    ) {
+        return commentService.getByPost(postId, pageable);
     }
 
     @DeleteMapping("/{id}")

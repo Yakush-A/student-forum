@@ -7,6 +7,8 @@ import app.student.forum.model.dto.post.PostUpdateDto;
 import app.student.forum.security.CustomUserDetails;
 import app.student.forum.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -29,11 +31,14 @@ public class PostController {
     }
 
     @GetMapping
-    public List<PostResponseDto> getAllPosts(@RequestParam(required = false) Long id) {
+    public Page<PostResponseDto> getAllPosts(
+            @RequestParam(required = false) Long id,
+            Pageable pageable
+    ) {
         if (id != null) {
-            return postService.getPostsByAuthor(id);
+            return postService.getPostsByAuthor(id, pageable);
         }
-        return postService.getAllPosts();
+        return postService.getAllPosts(pageable);
     }
 
     @GetMapping("/{id}")
