@@ -31,6 +31,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                 FROM Post p
                 JOIN p.author a
                 JOIN p.category c
+                LEFT JOIN p.tags
                 WHERE (:authorId IS NULL OR a.id = :authorId)
                 AND (:categoryName IS NULL OR c.name = :categoryName)
             """)

@@ -149,7 +149,7 @@ public class PostService {
             Long authorId,
             String categoryName,
             Pageable pageable,
-            boolean doNative
+            String doNative
     ) {
 
         Category category = categoryRepository.findByNameIgnoreCase(categoryName)
@@ -157,13 +157,11 @@ public class PostService {
 
         PostQueryKey postQueryKey = new PostQueryKey(category.getId(), authorId, pageable);
 
-
         return postCache.computeIfAbsent(
                 postQueryKey,
-                k ->
-                        (doNative)
-                                ? postRepository.findAllWithFilters(authorId, categoryName, pageable).map(postMapper::toDto)
-                                : postRepository.findAllWithFiltersNative(authorId, categoryName, pageable).map(postMapper::toDto)
+                k -> (doNative.equals("true"))
+                        ? postRepository.findAllWithFiltersNative(authorId, categoryName, pageable).map(postMapper::toDto)
+                        : postRepository.findAllWithFilters(authorId, categoryName, pageable).map(postMapper::toDto)
 
         );
 
