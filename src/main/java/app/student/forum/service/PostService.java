@@ -17,9 +17,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -144,6 +142,31 @@ public class PostService {
                 postQueryKey,
                 k -> postRepository.findByAuthorId(authorId, pageable).map(postMapper::toDto)
         );
+    }
+
+    @Transactional
+    public Page<PostResponseDto> getPostsByAuthorAndCategoryName(
+            Long authorId,
+            String categoryName,
+            Pageable pageable,
+            boolean doNative
+    ) {
+
+        Category category = categoryRepository.findByNameIgnoreCase(categoryName)
+                .orElseThrow(() -> new NotFoundException(CategoryService.CATEGORY_NOT_FOUND));
+
+        PostQueryKey postQueryKey = new PostQueryKey(category.getId(), authorId, pageable);
+
+
+        return postCache.computeIfAbsent(
+                postQueryKey,
+                k ->
+                        (doNative)
+                                ? postRepository.findAllWithFilters(authorId, categoryName, pageable).map(postMapper::toDto)
+                                : postRepository.findAllWithFiltersNative(authorId, categoryName, pageable).map(postMapper::toDto)
+
+        );
+
     }
 
     @Transactional

@@ -3,7 +3,6 @@ package app.student.forum.service;
 import app.student.forum.exception.BadRequestException;
 import app.student.forum.exception.ForbiddenAccessException;
 import app.student.forum.exception.NotFoundException;
-import app.student.forum.exception.PostNotFoundException;
 import app.student.forum.mapper.CommentMapper;
 import app.student.forum.model.dto.comment.CommentRequestDto;
 import app.student.forum.model.dto.comment.CommentResponseDto;
@@ -17,12 +16,9 @@ import app.student.forum.service.cache.CommentQueryKey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

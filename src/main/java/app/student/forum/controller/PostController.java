@@ -32,11 +32,13 @@ public class PostController {
 
     @GetMapping
     public Page<PostResponseDto> getAllPosts(
-            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) Long authorId,
+            @RequestParam(required = false) String categoryName,
+            @RequestParam(required = false) boolean doNative,
             Pageable pageable
     ) {
-        if (id != null) {
-            return postService.getPostsByAuthor(id, pageable);
+        if (authorId != null || categoryName != null) {
+            return postService.getPostsByAuthorAndCategoryName(authorId, categoryName, pageable, doNative);
         }
         return postService.getAllPosts(pageable);
     }
