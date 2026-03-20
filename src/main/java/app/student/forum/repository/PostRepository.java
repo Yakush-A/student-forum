@@ -24,14 +24,20 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Page<Post> findByAuthorId(Long id, Pageable pageable);
 
+    @Query("""
+            SELECT p FROM Post p
+            LEFT JOIN FETCH p.tags
+            LEFT JOIN FETCH p.category
+            LEFT JOIN FETCH p.author
+            """)
     Page<Post> findAll(Pageable pageable);
 
     @Query("""
-                SELECT p
-                FROM Post p
-                JOIN p.author a
-                JOIN p.category c
-                LEFT JOIN p.tags
+                SELECT p FROM Post p
+                LEFT JOIN FETCH p.comments
+                LEFT JOIN FETCH p.tags
+                LEFT JOIN FETCH p.category c
+                LEFT JOIN FETCH p.author a
                 WHERE (:authorId IS NULL OR a.id = :authorId)
                 AND (:categoryName IS NULL OR c.name = :categoryName)
             """)
@@ -42,8 +48,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     );
 
     @Query(value = """
-                SELECT p.*
-                FROM posts p
+                SELECT p.* FROM posts p
                 JOIN users u ON p.author_id = u.id
                 JOIN categories c ON p.category_id = c.id
                 WHERE (:authorId IS NULL OR u.id = :authorId)

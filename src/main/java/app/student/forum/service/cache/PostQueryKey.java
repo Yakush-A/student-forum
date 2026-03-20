@@ -6,15 +6,17 @@ import java.util.Objects;
 
 public class PostQueryKey {
     private final Long categoryId;
+    private final String categoryName;
     private final Long authorId;
     private final int size;
     private final int page;
 
-    public PostQueryKey(Long categoryId, Long authorId, Pageable pageable) {
+    public PostQueryKey(Long categoryId, String categoryName, Long authorId, Pageable pageable) {
         this.categoryId = categoryId;
         this.authorId = authorId;
         this.page = pageable.getPageNumber();
         this.size = pageable.getPageSize();
+        this.categoryName = categoryName;
     }
 
     @Override
@@ -29,11 +31,12 @@ public class PostQueryKey {
         return page == that.page
                 && size == that.size
                 && Objects.equals(categoryId, that.categoryId)
-                && Objects.equals(authorId, that.authorId);
+                && Objects.equals(authorId, that.authorId)
+                && Objects.equals(categoryName, that.categoryName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(categoryId, authorId, page, size);
+        return Objects.hash(categoryId, categoryName, authorId, page, size);
     }
 }

@@ -35,7 +35,7 @@ public class PostService {
     private final Map<PostQueryKey, Page<PostResponseDto>> postCache = new ConcurrentHashMap<>();
 
     public Page<PostResponseDto> getAllPosts(Pageable pageable) {
-        PostQueryKey postQueryKey = new PostQueryKey(null, null, pageable);
+        PostQueryKey postQueryKey = new PostQueryKey(null, null, null, pageable);
 
         return postCache.computeIfAbsent(
                 postQueryKey,
@@ -136,7 +136,7 @@ public class PostService {
 
     @Transactional
     public Page<PostResponseDto> getPostsByAuthor(Long authorId, Pageable pageable) {
-        PostQueryKey postQueryKey = new PostQueryKey(authorId, null, pageable);
+        PostQueryKey postQueryKey = new PostQueryKey(authorId, null, null, pageable);
 
         return postCache.computeIfAbsent(
                 postQueryKey,
@@ -152,17 +152,13 @@ public class PostService {
             String doNative
     ) {
 
-        Category category = categoryRepository.findByNameIgnoreCase(categoryName)
-                .orElseThrow(() -> new NotFoundException(CategoryService.CATEGORY_NOT_FOUND));
-
-        PostQueryKey postQueryKey = new PostQueryKey(category.getId(), authorId, pageable);
+        PostQueryKey postQueryKey = new PostQueryKey(null, categoryName, authorId, pageable);
 
         return postCache.computeIfAbsent(
                 postQueryKey,
                 k -> (doNative.equals("true"))
                         ? postRepository.findAllWithFiltersNative(authorId, categoryName, pageable).map(postMapper::toDto)
                         : postRepository.findAllWithFilters(authorId, categoryName, pageable).map(postMapper::toDto)
-
         );
 
     }
