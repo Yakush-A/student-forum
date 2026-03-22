@@ -1,7 +1,7 @@
 package app.student.forum.controller;
 
-import app.student.forum.model.dto.tag.TagRequestDto;
-import app.student.forum.model.dto.tag.TagResponseDto;
+import app.student.forum.dto.tag.TagRequestDto;
+import app.student.forum.dto.tag.TagResponseDto;
 import app.student.forum.service.TagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

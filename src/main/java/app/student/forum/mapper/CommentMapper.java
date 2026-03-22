@@ -1,7 +1,7 @@
 package app.student.forum.mapper;
 
-import app.student.forum.model.dto.comment.CommentResponseDto;
-import app.student.forum.model.entity.Comment;
+import app.student.forum.dto.comment.CommentResponseDto;
+import app.student.forum.entity.Comment;
 import org.springframework.stereotype.Component;
 
 @Component

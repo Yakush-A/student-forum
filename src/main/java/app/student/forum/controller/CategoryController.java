@@ -1,7 +1,7 @@
 package app.student.forum.controller;
 
-import app.student.forum.model.dto.category.CategoryRequestDto;
-import app.student.forum.model.dto.category.CategoryResponseDto;
+import app.student.forum.dto.category.CategoryRequestDto;
+import app.student.forum.dto.category.CategoryResponseDto;
 import app.student.forum.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

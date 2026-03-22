@@ -1,7 +1,7 @@
 package app.student.forum.controller;
 
-import app.student.forum.model.dto.comment.CommentRequestDto;
-import app.student.forum.model.dto.comment.CommentResponseDto;
+import app.student.forum.dto.comment.CommentRequestDto;
+import app.student.forum.dto.comment.CommentResponseDto;
 import app.student.forum.security.CustomUserDetails;
 import app.student.forum.service.CommentService;
 import lombok.RequiredArgsConstructor;

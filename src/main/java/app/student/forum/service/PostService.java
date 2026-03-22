@@ -1,29 +1,33 @@
 package app.student.forum.service;
 
-import app.student.forum.exception.ForbiddenAccessException;
+import app.student.forum.entity.*;
+import app.student.forum.exception.AccessDeniedException;
+import app.student.forum.exception.ErrorCode;
 import app.student.forum.exception.NotFoundException;
-import app.student.forum.exception.PostNotFoundException;
 import app.student.forum.mapper.PostMapper;
-import app.student.forum.model.dto.post.PostDetailsResponseDto;
-import app.student.forum.model.dto.post.PostRequestDto;
-import app.student.forum.model.dto.post.PostResponseDto;
-import app.student.forum.model.dto.post.PostUpdateDto;
-import app.student.forum.model.entity.*;
+import app.student.forum.dto.post.PostDetailsResponseDto;
+import app.student.forum.dto.post.PostRequestDto;
+import app.student.forum.dto.post.PostResponseDto;
+import app.student.forum.dto.post.PostUpdateDto;
 import app.student.forum.repository.CategoryRepository;
 import app.student.forum.repository.PostRepository;
 import app.student.forum.repository.TagRepository;
 import app.student.forum.service.cache.PostQueryKey;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
+import javax.smartcardio.CardTerminal;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+@Validated
 @Service
 @RequiredArgsConstructor
 public class PostService {
@@ -43,26 +47,25 @@ public class PostService {
         );
     }
 
-    public PostResponseDto create(PostRequestDto postRequestDto, User user) {
+    public PostResponseDto create(@Valid PostRequestDto postRequestDto, User user) {
 
         Post post = new Post();
 
         post.setContent(postRequestDto.getContent());
         post.setAuthor(user);
 
-        if (postRequestDto.getCategoryId() != null) {
-            Category category = categoryRepository.findById(postRequestDto.getCategoryId())
-                    .orElseThrow(() -> new NotFoundException("Category not found"));
+        Category category = categoryRepository.findById(postRequestDto.getCategoryId())
+                .orElseThrow(() -> new NotFoundException(ErrorCode.CATEGORY_NOT_FOUND));
 
-            post.setCategory(category);
-        } else {
-            post.setCategory(null);
-        }
+        post.setCategory(category);
 
-        if (postRequestDto.getTagIds() != null && !postRequestDto.getTagIds().isEmpty()) {
-            Set<Tag> tags = new HashSet<>(tagRepository.findAllById(postRequestDto.getTagIds()));
-            post.setTags(tags);
-        }
+        Set<Tag> tags = postRequestDto.getTagIds()
+                .stream()
+                .map(tagId -> tagRepository.findById(tagId)
+                        .orElseThrow(() -> new NotFoundException(ErrorCode.TAG_NOT_FOUND)))
+                .collect(Collectors.toSet());
+
+        post.setTags(tags);
 
         Post savedPost = postRepository.save(post);
         postCache.clear();
@@ -70,37 +73,29 @@ public class PostService {
     }
 
     @Transactional
-    public PostResponseDto patch(Long id, PostUpdateDto postUpdateDto, User user) {
+    public PostResponseDto patch(Long id, @Valid PostUpdateDto postUpdateDto, User user) {
 
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Post not found"));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.POST_NOT_FOUND));
 
         if (!post.getAuthor().getId().equals(user.getId())) {
-            throw new ForbiddenAccessException("You are not allowed to patch this post");
+            throw new AccessDeniedException(ErrorCode.ACCESS_DENIED);
         }
 
-        if (postUpdateDto.getContent() != null) {
-            post.setContent(postUpdateDto.getContent());
-        }
+        post.setContent(postUpdateDto.getContent());
 
-        if (postUpdateDto.getCategoryId() != null) {
+        Category category = categoryRepository.findById(postUpdateDto.getCategoryId())
+                .orElseThrow(() -> new NotFoundException(ErrorCode.CATEGORY_NOT_FOUND));
 
-            Category category = categoryRepository.findById(postUpdateDto.getCategoryId())
-                    .orElseThrow(() -> new NotFoundException("Category not found"));
+        post.setCategory(category);
 
-            post.setCategory(category);
-        }
+        Set<Tag> tags = postUpdateDto.getTagIds()
+                .stream()
+                .map(tagId -> tagRepository.findById(tagId)
+                        .orElseThrow(() -> new NotFoundException(ErrorCode.TAG_NOT_FOUND)))
+                .collect(Collectors.toSet());
 
-        if (postUpdateDto.getTagIds() != null) {
-
-            Set<Tag> tags = postUpdateDto.getTagIds()
-                    .stream()
-                    .map(tagId -> tagRepository.findById(tagId)
-                            .orElseThrow(() -> new NotFoundException("Tag not found")))
-                    .collect(Collectors.toSet());
-
-            post.setTags(tags);
-        }
+        post.setTags(tags);
 
         post.setEditedAt(LocalDateTime.now());
 
@@ -113,7 +108,7 @@ public class PostService {
     public void deletePostById(Long id, User user) {
 
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Post not found"));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.POST_NOT_FOUND));
 
         boolean isAuthor = post.getAuthor().getId().equals(user.getId());
         boolean isModerator = user.getRole().equals(Role.MODERATOR);
@@ -122,7 +117,7 @@ public class PostService {
         if (isAuthor || isModerator || isAdmin) {
             postRepository.delete(post);
         } else {
-            throw new NotFoundException("Post is corrupted");
+            throw new AccessDeniedException(ErrorCode.ACCESS_DENIED);
         }
         postCache.clear();
     }
@@ -130,7 +125,7 @@ public class PostService {
     @Transactional
     public PostDetailsResponseDto getPostById(Long id) {
         Post post = postRepository.findWithCommentsById(id)
-                .orElseThrow(PostNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(ErrorCode.POST_NOT_FOUND));
         return postMapper.toDetailsDto(post);
     }
 
@@ -167,7 +162,7 @@ public class PostService {
     public List<PostResponseDto> assignUncategorizedPostsToCategory(Long categoryId) {
 
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new NotFoundException("Category not found."));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.CATEGORY_NOT_FOUND));
 
         List<Post> uncategorizedPosts = postRepository.findByCategoryIsNull();
 
@@ -176,7 +171,7 @@ public class PostService {
                 post.setCategory(category);
                 postRepository.save(post);
             } else {
-                throw new ForbiddenAccessException("You are not allowed to patch this post");
+                throw new AccessDeniedException(ErrorCode.ACCESS_DENIED);
             }
         }
 

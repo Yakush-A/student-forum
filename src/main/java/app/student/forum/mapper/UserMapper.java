@@ -1,9 +1,9 @@
 package app.student.forum.mapper;
 
-import app.student.forum.model.dto.user.UserDetailsResponseDto;
-import app.student.forum.model.dto.user.UserRequestDto;
-import app.student.forum.model.dto.user.UserResponseDto;
-import app.student.forum.model.entity.User;
+import app.student.forum.dto.user.UserDetailsResponseDto;
+import app.student.forum.dto.user.UserRequestDto;
+import app.student.forum.dto.user.UserResponseDto;
+import app.student.forum.entity.User;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -1,43 +1,41 @@
 package app.student.forum.service;
 
-import app.student.forum.exception.BadRequestException;
+import app.student.forum.exception.ConflictException;
+import app.student.forum.exception.ErrorCode;
 import app.student.forum.exception.NotFoundException;
 import app.student.forum.mapper.CategoryMapper;
-import app.student.forum.model.dto.category.CategoryRequestDto;
-import app.student.forum.model.dto.category.CategoryResponseDto;
-import app.student.forum.model.entity.Category;
-import app.student.forum.model.entity.Post;
+import app.student.forum.dto.category.CategoryRequestDto;
+import app.student.forum.dto.category.CategoryResponseDto;
+import app.student.forum.entity.Category;
+import app.student.forum.entity.Post;
 import app.student.forum.repository.CategoryRepository;
 import app.student.forum.repository.PostRepository;
 import app.student.forum.service.cache.CategoryQueryKey;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Validated
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
-
-    public static final String CATEGORY_NAME_EXIST = "Category name already exist";
-    public static final String CATEGORY_NOT_FOUND = "Category not found";
-    public static final String CATEGORY_NAME_IS_EMPTY = "Category name is empty";
 
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
     private final PostRepository postRepository;
     private final Map<CategoryQueryKey, Page<CategoryResponseDto>> categoryCache = new ConcurrentHashMap<>();
 
-    public CategoryResponseDto create(CategoryRequestDto categoryRequestDto) {
+    public CategoryResponseDto create(@Valid CategoryRequestDto categoryRequestDto) {
 
-        if (categoryRequestDto.getName() == null || categoryRequestDto.getName().isEmpty()) {
-            throw new BadRequestException(CATEGORY_NAME_IS_EMPTY);
-        } else if (categoryRepository.existsByNameIgnoreCase(categoryRequestDto.getName())) {
-            throw new BadRequestException(CATEGORY_NAME_EXIST);
+        if (categoryRepository.existsByNameIgnoreCase(categoryRequestDto.getName())) {
+            throw new ConflictException(ErrorCode.CATEGORY_ALREADY_EXISTS);
         }
 
         Category category = categoryMapper.toEntity(categoryRequestDto);
@@ -60,20 +58,19 @@ public class CategoryService {
     public CategoryResponseDto getById(Long id) {
 
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(CATEGORY_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.CATEGORY_NOT_FOUND));
 
         return categoryMapper.toDto(category);
     }
 
-    public CategoryResponseDto update(Long id, CategoryRequestDto categoryDto) {
+    public CategoryResponseDto update(Long id, @Valid CategoryRequestDto categoryDto) {
 
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(CATEGORY_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
 
-        if (categoryDto.getName() == null || categoryDto.getName().isEmpty()) {
-            throw new BadRequestException(CATEGORY_NAME_IS_EMPTY);
+        if (categoryRepository.existsByNameIgnoreCase(categoryDto.getName())) {
+            throw new ConflictException(ErrorCode.CATEGORY_ALREADY_EXISTS);
         }
-
         category.setName(categoryDto.getName());
         category.setDescription(categoryDto.getDescription());
 
@@ -86,7 +83,7 @@ public class CategoryService {
     public void delete(Long id) {
 
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(CATEGORY_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.CATEGORY_NOT_FOUND));
 
         List<Post> posts = postRepository.findByCategoryId(id);
 

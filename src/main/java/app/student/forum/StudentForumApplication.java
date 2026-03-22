@@ -1,7 +1,9 @@
 package app.student.forum;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class StudentForumApplication {
@@ -9,4 +11,10 @@ public class StudentForumApplication {
     public static void main(String[] args) {
         SpringApplication.run(StudentForumApplication.class, args);
     }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
+    }
+
 }

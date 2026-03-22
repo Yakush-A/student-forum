@@ -1,18 +1,22 @@
 package app.student.forum.service;
 
-import app.student.forum.exception.UserNotFoundException;
-import app.student.forum.model.dto.auth.JwtResponseDto;
-import app.student.forum.model.dto.auth.LoginRequestDto;
-import app.student.forum.model.dto.auth.RegisterRequestDto;
-import app.student.forum.model.entity.Role;
-import app.student.forum.model.entity.User;
+import app.student.forum.exception.ErrorCode;
+import app.student.forum.dto.auth.JwtResponseDto;
+import app.student.forum.dto.auth.LoginRequestDto;
+import app.student.forum.dto.auth.RegisterRequestDto;
+import app.student.forum.entity.Role;
+import app.student.forum.entity.User;
+import app.student.forum.exception.UnauthorizedException;
 import app.student.forum.repository.UserRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ResponseStatusException;
 
+@Validated
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -21,13 +25,13 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-    public JwtResponseDto login(LoginRequestDto loginRequestDto) {
+    public JwtResponseDto login(@Valid LoginRequestDto loginRequestDto) {
 
         User user = userRepository.findByEmail(loginRequestDto.getEmail())
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(() -> new UnauthorizedException(ErrorCode.INVALID_CREDENTIALS));
 
         if (!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Wrong password");
+            throw new UnauthorizedException(ErrorCode.INVALID_CREDENTIALS);
         }
 
         String token = jwtService.generateToken(user);
@@ -35,7 +39,7 @@ public class AuthService {
         return new JwtResponseDto(token);
     }
 
-    public JwtResponseDto register(RegisterRequestDto registerRequestDto) {
+    public JwtResponseDto register(@Valid RegisterRequestDto registerRequestDto) {
 
         if (userRepository.findByEmail(registerRequestDto.getEmail()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User already exists");

@@ -1,7 +1,7 @@
 package app.student.forum.exception;
 
-public class BadRequestException extends RuntimeException {
-    public BadRequestException(String message) {
-        super(message);
+public class BadRequestException extends AppException {
+    public BadRequestException(ErrorCode errorCode) {
+        super(errorCode);
     }
 }

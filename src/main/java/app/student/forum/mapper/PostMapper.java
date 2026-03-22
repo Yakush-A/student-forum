@@ -1,9 +1,9 @@
 package app.student.forum.mapper;
 
-import app.student.forum.model.dto.post.PostDetailsResponseDto;
-import app.student.forum.model.dto.post.PostResponseDto;
-import app.student.forum.model.entity.Post;
-import app.student.forum.model.entity.Tag;
+import app.student.forum.dto.post.PostDetailsResponseDto;
+import app.student.forum.dto.post.PostResponseDto;
+import app.student.forum.entity.Post;
+import app.student.forum.entity.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

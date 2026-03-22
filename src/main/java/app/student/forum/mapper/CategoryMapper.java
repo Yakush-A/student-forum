@@ -1,8 +1,8 @@
 package app.student.forum.mapper;
 
-import app.student.forum.model.dto.category.CategoryRequestDto;
-import app.student.forum.model.dto.category.CategoryResponseDto;
-import app.student.forum.model.entity.Category;
+import app.student.forum.dto.category.CategoryRequestDto;
+import app.student.forum.dto.category.CategoryResponseDto;
+import app.student.forum.entity.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

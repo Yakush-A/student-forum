@@ -1,6 +1,6 @@
 package app.student.forum.security;
 
-import app.student.forum.model.entity.User;
+import app.student.forum.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.jspecify.annotations.Nullable;

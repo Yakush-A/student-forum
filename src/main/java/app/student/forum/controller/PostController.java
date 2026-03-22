@@ -1,20 +1,23 @@
 package app.student.forum.controller;
 
-import app.student.forum.model.dto.post.PostDetailsResponseDto;
-import app.student.forum.model.dto.post.PostRequestDto;
-import app.student.forum.model.dto.post.PostResponseDto;
-import app.student.forum.model.dto.post.PostUpdateDto;
+import app.student.forum.dto.post.PostDetailsResponseDto;
+import app.student.forum.dto.post.PostRequestDto;
+import app.student.forum.dto.post.PostResponseDto;
+import app.student.forum.dto.post.PostUpdateDto;
 import app.student.forum.security.CustomUserDetails;
 import app.student.forum.service.PostService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("/posts")
 @RequiredArgsConstructor
@@ -24,7 +27,7 @@ public class PostController {
 
     @PostMapping
     public PostResponseDto createPost(
-            @RequestBody PostRequestDto postRequestDto,
+            @RequestBody @Valid PostRequestDto postRequestDto,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
         return postService.create(postRequestDto, customUserDetails.getUser());
@@ -55,7 +58,7 @@ public class PostController {
     public PostResponseDto patchPost(
             @PathVariable Long id,
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @RequestBody PostUpdateDto postUpdateDto
+            @RequestBody @Valid PostUpdateDto postUpdateDto
     ) {
         return postService.patch(id, postUpdateDto, customUserDetails.getUser());
     }

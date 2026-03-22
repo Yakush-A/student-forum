@@ -1,6 +1,6 @@
 package app.student.forum.repository;
 
-import app.student.forum.model.entity.Tag;
+import app.student.forum.entity.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

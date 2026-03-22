@@ -1,14 +1,14 @@
 package app.student.forum.controller;
 
-import app.student.forum.model.dto.user.*;
+import app.student.forum.dto.user.*;
 import app.student.forum.security.CustomUserDetails;
 import app.student.forum.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -23,8 +23,8 @@ public class UserController {
     }
 
     @GetMapping
-    public List<UserResponseDto> getAllUsers() {
-        return userService.getAll();
+    public Page<UserResponseDto> getAllUsers(Pageable pageable) {
+        return userService.getAll(pageable);
     }
 
     @DeleteMapping("/{id}")
