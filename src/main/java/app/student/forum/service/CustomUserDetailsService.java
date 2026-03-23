@@ -5,8 +5,8 @@ import app.student.forum.exception.NotFoundException;
 import app.student.forum.entity.User;
 import app.student.forum.repository.UserRepository;
 import app.student.forum.security.CustomUserDetails;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.NonNull;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 

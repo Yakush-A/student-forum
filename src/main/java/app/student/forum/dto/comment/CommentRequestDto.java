@@ -1,13 +1,34 @@
 package app.student.forum.dto.comment;
 
+import app.student.forum.validation.ValidationConstants;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Schema(description = "Запрос на создание или обновление комментария")
 public class CommentRequestDto {
 
+    @NotBlank
+    @Size(
+            max = ValidationConstants.MAX_CONTENT_LENGTH
+    )
+    @Schema(
+            description = "Текст комментария",
+            example = "Очень полезный пост!",
+            requiredMode = Schema.RequiredMode.REQUIRED
+    )
     private String content;
-    private Long postId;
 
+    @NotNull
+    @Schema(
+            description = "ID поста",
+            example = "42",
+            requiredMode = Schema.RequiredMode.REQUIRED
+    )
+    private Long postId;
 }
