@@ -3,12 +3,14 @@ package app.student.forum.service;
 import app.student.forum.entity.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
 
+@Slf4j
 @Service
 public class JwtService {
 
@@ -21,6 +23,8 @@ public class JwtService {
     public String generateToken(User user) {
 
         Key key = Keys.hmacShaKeyFor(secretKey.getBytes());
+
+        log.debug("Token generated for user {}", user.getId());
 
         return Jwts.builder()
                 .setSubject(user.getEmail())

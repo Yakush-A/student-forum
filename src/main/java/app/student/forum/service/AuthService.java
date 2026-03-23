@@ -10,12 +10,14 @@ import app.student.forum.exception.UnauthorizedException;
 import app.student.forum.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ResponseStatusException;
 
+@Slf4j
 @Validated
 @Service
 @RequiredArgsConstructor
@@ -27,21 +29,30 @@ public class AuthService {
 
     public JwtResponseDto login(@Valid LoginRequestDto loginRequestDto) {
 
+        log.info("Login request received for email: {}", loginRequestDto.getEmail());
+
         User user = userRepository.findByEmail(loginRequestDto.getEmail())
-                .orElseThrow(() -> new UnauthorizedException(ErrorCode.INVALID_CREDENTIALS));
+                .orElseThrow(() -> {
+                    log.warn("Login failed! User not found for email: {}", loginRequestDto.getEmail());
+                    return new UnauthorizedException(ErrorCode.INVALID_CREDENTIALS);
+                });
 
         if (!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
+            log.warn("Login failed! Invalid credentials for email: {}", loginRequestDto.getEmail());
             throw new UnauthorizedException(ErrorCode.INVALID_CREDENTIALS);
         }
 
         String token = jwtService.generateToken(user);
 
+        log.info("Login success for email: {}", loginRequestDto.getEmail());
         return new JwtResponseDto(token);
     }
 
     public JwtResponseDto register(@Valid RegisterRequestDto registerRequestDto) {
+        log.info("Register request received for email: {}", registerRequestDto.getEmail());
 
         if (userRepository.findByEmail(registerRequestDto.getEmail()).isPresent()) {
+            log.warn("Registration failed! User already exists for email: {}", registerRequestDto.getEmail());
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User already exists");
         }
 
@@ -55,6 +66,7 @@ public class AuthService {
 
         String token = jwtService.generateToken(user);
 
+        log.info("Register success for email: {}", registerRequestDto.getEmail());
         return new JwtResponseDto(token);
     }
 }
