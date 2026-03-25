@@ -2,12 +2,14 @@ package app.student.forum.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ValidationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -24,6 +26,11 @@ public class GlobalExceptionHandler {
             AccessDeniedException ex,
             HttpServletRequest request
     ) {
+        log.error("Error {}! Access denied at {}: {}",
+                ex.getErrorCode(),
+                request.getRequestURI(),
+                ex.getMessage()
+        );
         return buildResponse(ex, request, HttpStatus.FORBIDDEN);
     }
 
@@ -32,6 +39,11 @@ public class GlobalExceptionHandler {
             ConflictException ex,
             HttpServletRequest request
     ) {
+        log.error("Error {}! Conflict happened at {}: {}",
+                ex.getErrorCode(),
+                request.getRequestURI(),
+                ex.getMessage()
+        );
         return buildResponse(ex, request, HttpStatus.CONFLICT);
     }
 
@@ -40,6 +52,11 @@ public class GlobalExceptionHandler {
             UnauthorizedException ex,
             HttpServletRequest request
     ) {
+        log.error("Error {}! Unauthorized access at {}: {}",
+            ex.getErrorCode(),
+            request.getRequestURI(),
+            ex.getMessage()
+        );
         return buildResponse(ex, request, HttpStatus.UNAUTHORIZED);
     }
 
@@ -48,6 +65,11 @@ public class GlobalExceptionHandler {
             ValidationException ex,
             HttpServletRequest request
     ) {
+        log.error("Error {}! Validation failed at {}: {}",
+                HttpStatus.UNAUTHORIZED.value(),
+                request.getRequestURI(),
+                ex.getMessage()
+        );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 new ErrorResponse(
                         HttpStatus.BAD_REQUEST.name(),
@@ -63,7 +85,11 @@ public class GlobalExceptionHandler {
             MethodArgumentNotValidException ex,
             HttpServletRequest request
     ) {
-
+        log.error("Error {}! Invalid argument in request at {}: {}",
+                HttpStatus.BAD_REQUEST.value(),
+                request.getRequestURI(),
+                ex.getMessage()
+        );
         ErrorResponse response = new ErrorResponse(
                 ErrorCode.INVALID_REQUEST.name(),
                 ErrorCode.INVALID_REQUEST.getMessage(),

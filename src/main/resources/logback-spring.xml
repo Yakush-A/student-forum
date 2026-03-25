@@ -2,15 +2,16 @@
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>logs/app.log</file>
 
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
 
-            <fileNamePattern>logs/app.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>logs/app.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxHistory>14</maxHistory>
 
+            <maxFileSize>20KB</maxFileSize>
         </rollingPolicy>
 
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger - %msg%n</pattern>
+            <pattern>%msg%n</pattern>
         </encoder>
 
     </appender>

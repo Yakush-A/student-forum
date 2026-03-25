@@ -78,7 +78,7 @@ public class PostService {
         postCache.clear();
         log.debug("Post cache cleared after create");
 
-        log.info("Post created {} by user {}", savedPost, user.getId());
+        log.info("Post created {} by user {}", savedPost.getId(), user.getId());
         return postMapper.toDto(savedPost);
     }
 
