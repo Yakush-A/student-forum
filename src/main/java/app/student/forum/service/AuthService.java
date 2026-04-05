@@ -1,5 +1,6 @@
 package app.student.forum.service;
 
+import app.student.forum.exception.ConflictException;
 import app.student.forum.exception.ErrorCode;
 import app.student.forum.dto.auth.JwtResponseDto;
 import app.student.forum.dto.auth.LoginRequestDto;
@@ -11,11 +12,9 @@ import app.student.forum.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @Validated
@@ -53,7 +52,7 @@ public class AuthService {
 
         if (userRepository.findByEmail(registerRequestDto.getEmail()).isPresent()) {
             log.warn("Registration failed! User already exists for email: {}", registerRequestDto.getEmail());
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "User already exists");
+            throw new ConflictException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
         User user = new User();

@@ -9,6 +9,7 @@ import app.student.forum.dto.tag.TagResponseDto;
 import app.student.forum.entity.Tag;
 import app.student.forum.repository.TagRepository;
 import app.student.forum.service.cache.TagQueryKey;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -30,6 +32,7 @@ public class TagService {
     private final TagMapper tagMapper;
     private final Map<TagQueryKey, Page<TagResponseDto>> tagCache = new HashMap<>();
 
+    @Transactional
     public TagResponseDto create(@Valid TagRequestDto tagRequestDto) {
         log.info("Creating tag {}", tagRequestDto.getName());
 
@@ -43,6 +46,19 @@ public class TagService {
 
         log.info("Tag created {}", savedTag.getName());
         return tagMapper.toDto(savedTag);
+    }
+
+    @Transactional
+    public List<TagResponseDto> createBulk(List<TagRequestDto> tags) {
+        log.info("Creating tags (bulk)");
+
+        List<TagResponseDto> response = tags.stream()
+                .map(this::create)
+                .toList();
+
+        tagCache.clear();
+
+        return response;
     }
 
     public Page<TagResponseDto> findAllByName(Pageable pageable, String name) {

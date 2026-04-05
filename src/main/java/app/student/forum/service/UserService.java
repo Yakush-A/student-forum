@@ -89,8 +89,8 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
 
         boolean isSameUser = user.getId().equals(userToDelete.getId());
-        boolean isModerator = user.getRole().equals(Role.MODERATOR);
-        boolean isAdmin = user.getRole().equals(Role.ADMIN);
+        boolean isModerator = Role.MODERATOR.equals(user.getRole());
+        boolean isAdmin = Role.ADMIN.equals(user.getRole());
 
         if (isSameUser || isModerator || isAdmin) {
             userRepository.delete(userToDelete);

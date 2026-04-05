@@ -128,17 +128,4 @@ public class PostController {
         postService.deletePostById(id, customUserDetails.getUser());
     }
 
-    @Operation(
-            summary = "Назначить категорию постам",
-            description = "Назначает категорию всем постам без категории (только ADMIN)"
-    )
-    @PatchMapping("/categorize/{categoryId}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public List<PostResponseDto> categorizePosts(
-
-            @Parameter(description = "ID категории", example = "3")
-            @PathVariable Long categoryId
-    ) {
-        return postService.assignUncategorizedPostsToCategory(categoryId);
-    }
 }

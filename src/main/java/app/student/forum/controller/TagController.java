@@ -13,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/tags")
 @RequiredArgsConstructor
@@ -36,6 +38,22 @@ public class TagController {
             @RequestBody TagRequestDto tagRequestDto
     ) {
         return tagService.create(tagRequestDto);
+    }
+
+    @Operation(
+            summary = "Создать несколько тегов",
+            description = "Создает несколько новых тегов bulk операцией (доступно ADMIN и MODERATOR)"
+    )
+    @PostMapping("/bulk")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
+    public List<TagResponseDto> createBulk(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Данные для создания тегов",
+                    required = true
+            )
+            @RequestBody @Valid List<TagRequestDto> tagsRequestDto
+    ) {
+        return tagService.createBulk(tagsRequestDto);
     }
 
     @Operation(

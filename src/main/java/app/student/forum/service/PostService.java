@@ -2,7 +2,6 @@ package app.student.forum.service;
 
 import app.student.forum.entity.*;
 import app.student.forum.exception.AccessDeniedException;
-import app.student.forum.exception.ConflictException;
 import app.student.forum.exception.ErrorCode;
 import app.student.forum.exception.NotFoundException;
 import app.student.forum.mapper.PostMapper;
@@ -171,28 +170,4 @@ public class PostService {
 
     }
 
-    @Transactional
-    public List<PostResponseDto> assignUncategorizedPostsToCategory(Long categoryId) {
-        log.info("Assigning uncategorized posts to category {}", categoryId);
-
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.CATEGORY_NOT_FOUND));
-
-        List<Post> uncategorizedPosts = postRepository.findByCategoryIsNull();
-
-        for (Post post : uncategorizedPosts) {
-            if (post.valid()) {
-                post.setCategory(category);
-                postRepository.save(post);
-            } else {
-                log.error("Post {} is corrupted", post.getId());
-                throw new ConflictException(ErrorCode.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        log.info("Uncategorized posts have been assigned to category {}", categoryId);
-        return uncategorizedPosts.stream()
-                .map(postMapper::toDto)
-                .toList();
-    }
 }

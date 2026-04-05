@@ -18,7 +18,7 @@
                 ${LOG_PATH}/archive/${LOG_FILE}.%d{yyyy-MM-dd}.%i.log.gz
             </fileNamePattern>
 
-            <maxFileSize>10KB</maxFileSize>
+            <maxFileSize>10MB</maxFileSize>
 
             <maxHistory>30</maxHistory>
 
