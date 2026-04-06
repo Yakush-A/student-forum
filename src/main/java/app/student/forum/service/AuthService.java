@@ -9,6 +9,7 @@ import app.student.forum.entity.Role;
 import app.student.forum.entity.User;
 import app.student.forum.exception.UnauthorizedException;
 import app.student.forum.repository.UserRepository;
+import app.student.forum.security.JwtService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

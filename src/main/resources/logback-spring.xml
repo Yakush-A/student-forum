@@ -22,7 +22,7 @@
 
             <maxHistory>30</maxHistory>
 
-            <totalSizeCap>1GB</totalSizeCap>
+            <totalSizeCap>100MB</totalSizeCap>
 
         </rollingPolicy>
 

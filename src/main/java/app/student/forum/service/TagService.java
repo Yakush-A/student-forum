@@ -8,7 +8,7 @@ import app.student.forum.dto.tag.TagRequestDto;
 import app.student.forum.dto.tag.TagResponseDto;
 import app.student.forum.entity.Tag;
 import app.student.forum.repository.TagRepository;
-import app.student.forum.service.cache.TagQueryKey;
+import app.student.forum.cache.TagQueryKey;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -1,16 +1,16 @@
-package app.student.forum.service.cache;
+package app.student.forum.cache;
 
 import org.springframework.data.domain.Pageable;
 
 import java.util.Objects;
 
-public class CategoryQueryKey {
-    private final String categoryName;
+public class TagQueryKey {
+    private final String tagName;
     private final int page;
     private final int size;
 
-    public CategoryQueryKey(String categoryName, Pageable pageable) {
-        this.categoryName = categoryName;
+    public TagQueryKey(String tagName, Pageable pageable) {
+        this.tagName = tagName;
         this.page = pageable.getPageNumber();
         this.size = pageable.getPageSize();
     }
@@ -22,15 +22,14 @@ public class CategoryQueryKey {
         } else if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        CategoryQueryKey that = (CategoryQueryKey) o;
+        TagQueryKey that = (TagQueryKey) o;
         return page == that.page
                 && size == that.size
-                && Objects.equals(categoryName, that.categoryName);
+                && Objects.equals(tagName, that.tagName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(categoryName, page, size);
+        return Objects.hash(tagName, page, size);
     }
-
 }

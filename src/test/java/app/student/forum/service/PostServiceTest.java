@@ -275,4 +275,141 @@ class PostServiceTest {
                 .findAllWithFilters(any(), any(), eq(pageable));
     }
 
+    @Test
+    void createShouldThrowWhenTagNotFound() {
+        User user = new User();
+        user.setId(1L);
+
+        PostRequestDto dto = new PostRequestDto(CATEGORY_ID, "content", List.of(TAG_ID));
+
+        Category category = new Category();
+        category.setId(CATEGORY_ID);
+
+        when(categoryRepository.findById(CATEGORY_ID)).thenReturn(Optional.of(category));
+        when(tagRepository.findById(TAG_ID)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class,
+                () -> postService.create(dto, user));
+    }
+
+    @Test
+    void patchShouldThrowNotFound() {
+        User user = new User();
+        user.setId(1L);
+
+        PostUpdateDto dto = new PostUpdateDto("new", CATEGORY_ID, Set.of(TAG_ID));
+
+        when(postRepository.findById(POST_ID)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class,
+                () -> postService.patch(POST_ID, dto, user));
+    }
+
+    @Test
+    void patchShouldThrowWhenCategoryNotFound() {
+        User user = new User();
+        user.setId(1L);
+
+        Post post = new Post();
+        post.setId(POST_ID);
+
+        User author = new User();
+        author.setId(1L);
+        post.setAuthor(author);
+
+        PostUpdateDto dto = new PostUpdateDto("new", CATEGORY_ID, Set.of(TAG_ID));
+
+        when(postRepository.findById(POST_ID)).thenReturn(Optional.of(post));
+        when(categoryRepository.findById(CATEGORY_ID)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class,
+                () -> postService.patch(POST_ID, dto, user));
+    }
+
+    @Test
+    void patchShouldThrowWhenTagNotFound() {
+        User user = new User();
+        user.setId(1L);
+
+        Post post = new Post();
+        post.setId(POST_ID);
+
+        User author = new User();
+        author.setId(1L);
+        post.setAuthor(author);
+
+        Category category = new Category();
+        category.setId(CATEGORY_ID);
+
+        PostUpdateDto dto = new PostUpdateDto("new", CATEGORY_ID, Set.of(TAG_ID));
+
+        when(postRepository.findById(POST_ID)).thenReturn(Optional.of(post));
+        when(categoryRepository.findById(CATEGORY_ID)).thenReturn(Optional.of(category));
+        when(tagRepository.findById(TAG_ID)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class,
+                () -> postService.patch(POST_ID, dto, user));
+    }
+
+    @Test
+    void deletePostByIdShouldDeleteWhenModerator() {
+        User user = new User();
+        user.setId(2L);
+        user.setRole(Role.MODERATOR);
+
+        Post post = new Post();
+        post.setId(POST_ID);
+
+        User author = new User();
+        author.setId(1L);
+        post.setAuthor(author);
+
+        when(postRepository.findById(POST_ID)).thenReturn(Optional.of(post));
+
+        postService.deletePostById(POST_ID, user);
+
+        verify(postRepository).delete(post);
+    }
+
+    @Test
+    void getPostByIdShouldThrowNotFound() {
+        when(postRepository.findWithCommentsById(POST_ID))
+                .thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class,
+                () -> postService.getPostById(POST_ID));
+    }
+
+    @Test
+    void getPostsByAuthorAndCategoryNameShouldReturnMappedPageWhenNativeTrue() {
+        Pageable pageable = PageRequest.of(0, PAGE_SIZE);
+
+        Long authorId = 1L;
+        String category = "cat";
+
+        Post post = new Post();
+        post.setId(POST_ID);
+
+        Page<Post> page = new PageImpl<>(List.of(post));
+
+        PostResponseDto dto = new PostResponseDto();
+        dto.setId(POST_ID);
+
+        when(postRepository.findAllWithFiltersNative(authorId, category, pageable))
+                .thenReturn(page);
+        when(postMapper.toDto(post)).thenReturn(dto);
+
+        Page<PostResponseDto> result =
+                postService.getPostsByAuthorAndCategoryName(authorId, category, pageable, "true");
+
+        assertEquals(1, result.getContent().size());
+        assertEquals(dto, result.getContent().getFirst());
+
+        verify(postRepository)
+                .findAllWithFiltersNative(authorId, category, pageable);
+
+        verify(postRepository, never())
+                .findAllWithFilters(any(), any(), any());
+    }
+
 }

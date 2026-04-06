@@ -1,6 +1,5 @@
 package app.student.forum.security;
 
-import app.student.forum.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

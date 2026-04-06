@@ -12,7 +12,7 @@ import app.student.forum.entity.Role;
 import app.student.forum.entity.User;
 import app.student.forum.repository.CommentRepository;
 import app.student.forum.repository.PostRepository;
-import app.student.forum.service.cache.CommentQueryKey;
+import app.student.forum.cache.CommentQueryKey;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -259,4 +259,20 @@ class UserServiceTest {
         assertThrows(NotFoundException.class,
                 () -> userService.deleteUserById(USER_ID, current));
     }
+
+    @Test
+    void deleteUserShouldDeleteWhenModerator() {
+        User current = new User();
+        current.setId(2L);
+        current.setRole(Role.MODERATOR);
+
+        User target = new User();
+        target.setId(USER_ID);
+
+        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(target));
+
+        userService.deleteUserById(USER_ID, current);
+
+        verify(userRepository).delete(target);
+    }
 }

@@ -210,4 +210,28 @@ class TagServiceTest {
         assertEquals(first, second);
         verify(tagRepository, times(1)).findAll(pageable);
     }
+
+    @Test
+    void findAllByNameShouldUseCache() {
+
+        Pageable pageable = PageRequest.of(0, 10);
+        String name = "java";
+
+        Tag tag = new Tag();
+        Page<Tag> page = new PageImpl<>(List.of(tag));
+
+        TagResponseDto dto = new TagResponseDto(1L, "java");
+
+        when(tagRepository.findByNameContainingIgnoreCase(name, pageable)).thenReturn(page);
+        when(tagMapper.toDto(tag)).thenReturn(dto);
+
+        Page<TagResponseDto> first = tagService.findAllByName(pageable, name);
+        Page<TagResponseDto> second = tagService.findAllByName(pageable, name);
+
+        assertEquals(first, second);
+
+        verify(tagRepository, times(1))
+                .findByNameContainingIgnoreCase(name, pageable);
+    }
+
 }

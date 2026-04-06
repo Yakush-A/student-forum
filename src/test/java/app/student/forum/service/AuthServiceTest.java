@@ -7,6 +7,7 @@ import app.student.forum.entity.User;
 import app.student.forum.exception.ConflictException;
 import app.student.forum.exception.UnauthorizedException;
 import app.student.forum.repository.UserRepository;
+import app.student.forum.security.JwtService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

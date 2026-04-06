@@ -1,4 +1,4 @@
-package app.student.forum.service;
+package app.student.forum.security;
 
 import app.student.forum.entity.User;
 import io.jsonwebtoken.Jwts;

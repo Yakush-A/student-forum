@@ -1,4 +1,4 @@
-package app.student.forum.service.cache;
+package app.student.forum.cache;
 
 import org.springframework.data.domain.Pageable;
 

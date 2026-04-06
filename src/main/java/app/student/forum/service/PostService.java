@@ -12,7 +12,7 @@ import app.student.forum.dto.post.PostUpdateDto;
 import app.student.forum.repository.CategoryRepository;
 import app.student.forum.repository.PostRepository;
 import app.student.forum.repository.TagRepository;
-import app.student.forum.service.cache.PostQueryKey;
+import app.student.forum.cache.PostQueryKey;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

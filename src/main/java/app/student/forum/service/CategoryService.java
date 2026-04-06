@@ -10,7 +10,7 @@ import app.student.forum.entity.Category;
 import app.student.forum.entity.Post;
 import app.student.forum.repository.CategoryRepository;
 import app.student.forum.repository.PostRepository;
-import app.student.forum.service.cache.CategoryQueryKey;
+import app.student.forum.cache.CategoryQueryKey;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
