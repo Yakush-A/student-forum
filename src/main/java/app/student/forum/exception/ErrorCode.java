@@ -9,9 +9,9 @@ public enum ErrorCode {
     CATEGORY_NOT_FOUND("CATEGORY_NOT_FOUND", "Category not found"),
     COMMENT_NOT_FOUND("COMMENT_NOT_FOUND", "Comment not found"),
     POST_NOT_FOUND("POST_NOT_FOUND", "Post not found"),
+    TASK_NOT_FOUND("TASK_NOT_FOUND", "Task not found"),
     ACCESS_DENIED("ACCESS_DENIED", "Access denied"),
     UNAUTHORIZED("UNAUTHORIZED", "Unauthorized"),
-    VALIDATION_FAILED("VALIDATION_FAILED", "Validation failed"),
     INVALID_REQUEST("INVALID_REQUEST", "Invalid request"),
     INTERNAL_SERVER_ERROR("INTERNAL_SERVER_ERROR", "Internal server error"),
     PASSWORD_MISMATCH("PASSWORD_MISMATCH", "Password does not match"),
@@ -24,7 +24,7 @@ public enum ErrorCode {
     private final String message;
     private final String code;
 
-    ErrorCode(String message, String code) {
+    ErrorCode(String code, String message) {
         this.message = message;
         this.code = code;
     }
