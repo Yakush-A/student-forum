@@ -5,7 +5,6 @@ import app.student.forum.entity.TaskStatus;
 import app.student.forum.entity.User;
 import app.student.forum.exception.ErrorCode;
 import app.student.forum.exception.NotFoundException;
-import org.springframework.scheduling.config.Task;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -16,9 +15,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class AsyncTaskStorage {
 
-    private Map<String, AsyncTask> tasks = new ConcurrentHashMap<>();
+    private final Map<String, AsyncTask> tasks = new ConcurrentHashMap<>();
 
-    public String create(User user) {
+    public AsyncTask create(User user) {
 
         String taskId = UUID.randomUUID().toString();
 
@@ -26,7 +25,7 @@ public class AsyncTaskStorage {
 
         tasks.put(taskId, asyncTask);
 
-        return taskId;
+        return tasks.get(taskId);
     }
 
     public Optional<AsyncTask> get(String taskId) {

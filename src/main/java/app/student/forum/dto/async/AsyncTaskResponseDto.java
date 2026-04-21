@@ -11,24 +11,25 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "Ответ запроса состояния асинхронной бизнес задачи")
+@Schema(description = "Ответ с информацией о состоянии асинхронной задачи")
 public class AsyncTaskResponseDto {
+
     @Schema(
-            description = "b",
-            example = "a"
+            description = "Уникальный идентификатор асинхронной задачи",
+            example = "task-12345"
     )
     private String taskId;
 
     @Schema(
-            description = "b",
-            example = "a"
+            description = "Идентификатор пользователя, инициировавшего задачу",
+            example = "42"
     )
     private Long userId;
 
     @Schema(
-            description = "b",
-            example = "a"
+            description = "Текущий статус выполнения задачи",
+            example = "RUNNING",
+            implementation = TaskStatus.class
     )
     private TaskStatus taskStatus;
-
 }

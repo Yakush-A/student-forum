@@ -1,16 +1,16 @@
 package app.student.forum.util;
 
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class AtomicCounter {
 
-    private final AtomicLong counter = new AtomicLong();
+    private final AtomicInteger counter = new AtomicInteger();
 
     public void increment() {
         counter.incrementAndGet();
     }
 
-    public Long get() {
+    public int get() {
         return counter.get();
     }
 }
