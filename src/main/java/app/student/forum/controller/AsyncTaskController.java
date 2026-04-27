@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/tasks")
-@Tag(name = "Асинхронные задачи", description = "API для запуска и отслеживания асинхронных задач")
+@Tag(name = "AsyncTask", description = "Запуск и отслеживание асинхронных задач")
 public class AsyncTaskController {
 
     private final AsyncTaskService asyncTaskService;

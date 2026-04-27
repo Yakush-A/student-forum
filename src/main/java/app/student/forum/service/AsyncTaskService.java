@@ -12,11 +12,9 @@ import app.student.forum.util.AsyncTaskExecutor;
 import app.student.forum.util.AsyncTaskStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 
 @Slf4j
-@EnableAsync
 @RequiredArgsConstructor
 @Service
 public class AsyncTaskService {
@@ -28,7 +26,6 @@ public class AsyncTaskService {
 
     public AsyncTaskResponseDto startTask(User user) {
         AsyncTask task = asyncTaskStorage.create(user);
-        log.info("User {} started task {}", user.getId(), task.getId());
 
         asyncTaskExecutor.executeTask(task.getId());
 

@@ -32,7 +32,7 @@
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract taskId" enabled="true">
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract taskId">
             <stringProp name="JSONPostProcessor.referenceNames">taskId</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.taskId</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
@@ -42,13 +42,13 @@
             <collectionProp name="HeaderManager.headers">
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">Authorization</stringProp>
-                <stringProp name="Header.value">Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3Njg2ODM5OCwiZXhwIjoxNzc2OTU0Nzk4fQ.KAJLpudcJDSbEAycfRBzFshUlV2JBDU2ks9aFS931j-SO8dUz1PSvAGVdS0QGCsMG2N2pJYDMpE90mWv9fQ6ew</stringProp>
+                <stringProp name="Header.value">Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtYWlsLmJ5Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzc3MzE2NTI4LCJleHAiOjE3Nzc0MDI5Mjh9.9K7au7v-C2K1qPhXGwxhB4bqofORo1jPtO0KbKgtwqcr9h1-cTWjfQQKV-6YT6_UCiACiLN76IlI5CUUFnDYOA</stringProp>
               </elementProp>
             </collectionProp>
           </HeaderManager>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Get Task Status">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Get Task Status" enabled="true">
           <stringProp name="HTTPSampler.domain">localhost</stringProp>
           <stringProp name="HTTPSampler.port">8080</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -66,7 +66,7 @@
             <collectionProp name="HeaderManager.headers">
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">Authorization</stringProp>
-                <stringProp name="Header.value">Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3Njg2ODM5OCwiZXhwIjoxNzc2OTU0Nzk4fQ.KAJLpudcJDSbEAycfRBzFshUlV2JBDU2ks9aFS931j-SO8dUz1PSvAGVdS0QGCsMG2N2pJYDMpE90mWv9fQ6ew</stringProp>
+                <stringProp name="Header.value">Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtYWlsLmJ5Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzc3MzE2NTI4LCJleHAiOjE3Nzc0MDI5Mjh9.9K7au7v-C2K1qPhXGwxhB4bqofORo1jPtO0KbKgtwqcr9h1-cTWjfQQKV-6YT6_UCiACiLN76IlI5CUUFnDYOA</stringProp>
               </elementProp>
             </collectionProp>
           </HeaderManager>

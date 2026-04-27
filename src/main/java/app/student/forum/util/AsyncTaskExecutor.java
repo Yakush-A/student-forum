@@ -6,8 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.CompletableFuture;
-
 @Slf4j
 @RequiredArgsConstructor
 @Component
@@ -17,7 +15,7 @@ public class AsyncTaskExecutor {
 
     private final AsyncTaskStorage asyncTaskStorage;
 
-    @Async
+    @Async("taskExecutor")
     public void executeTask(String taskId) {
         log.info("Task {} started", taskId);
 
