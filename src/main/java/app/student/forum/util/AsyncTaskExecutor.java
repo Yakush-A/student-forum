@@ -18,7 +18,7 @@ public class AsyncTaskExecutor {
     private final AsyncTaskStorage asyncTaskStorage;
 
     @Async
-    public CompletableFuture<Void> executeTask(String taskId) {
+    public void executeTask(String taskId) {
         log.info("Task {} started", taskId);
 
         try {
@@ -36,7 +36,5 @@ public class AsyncTaskExecutor {
             asyncTaskStorage.updateTask(taskId, TaskStatus.FAILED);
             Thread.currentThread().interrupt();
         }
-
-        return CompletableFuture.completedFuture(null);
     }
 }

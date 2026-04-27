@@ -18,7 +18,7 @@
         </elementProp>
       </ThreadGroup>
       <hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Create Task" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Create Task">
           <stringProp name="HTTPSampler.domain">localhost</stringProp>
           <stringProp name="HTTPSampler.port">8080</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -38,17 +38,17 @@
             <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
           </JSONPostProcessor>
           <hashTree/>
-          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager">
             <collectionProp name="HeaderManager.headers">
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">Authorization</stringProp>
-                <stringProp name="Header.value">Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtYWlsLmJ5Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzc2Nzk0OTgwLCJleHAiOjE3NzY4ODEzODB9.mr0sP2Vzq_49g2CqNszPuz6lbeiJyqnktzuSz5TyYcLk2d-D5-pUotVvDGJXsU5JXW5SAs35kBqUV-dqArcpkg</stringProp>
+                <stringProp name="Header.value">Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3Njg2ODM5OCwiZXhwIjoxNzc2OTU0Nzk4fQ.KAJLpudcJDSbEAycfRBzFshUlV2JBDU2ks9aFS931j-SO8dUz1PSvAGVdS0QGCsMG2N2pJYDMpE90mWv9fQ6ew</stringProp>
               </elementProp>
             </collectionProp>
           </HeaderManager>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Get Task Status" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Get Task Status">
           <stringProp name="HTTPSampler.domain">localhost</stringProp>
           <stringProp name="HTTPSampler.port">8080</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -62,11 +62,11 @@
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager">
             <collectionProp name="HeaderManager.headers">
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">Authorization</stringProp>
-                <stringProp name="Header.value">Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtYWlsLmJ5Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzc2Nzk1MTgzLCJleHAiOjE3NzY4ODE1ODN9.5og_ty4wUjiYqfgk_9x-Ezycm6S3Duce0sfUBHLES6e3Xxxwkse7CEYd3T6I06Tim-MP8YWIaBL5TqJCKWW8ZA</stringProp>
+                <stringProp name="Header.value">Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3Njg2ODM5OCwiZXhwIjoxNzc2OTU0Nzk4fQ.KAJLpudcJDSbEAycfRBzFshUlV2JBDU2ks9aFS931j-SO8dUz1PSvAGVdS0QGCsMG2N2pJYDMpE90mWv9fQ6ew</stringProp>
               </elementProp>
             </collectionProp>
           </HeaderManager>
